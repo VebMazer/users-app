@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 
-const { secret } = require('../config')
+const { jwtSecret } = require('../config')
 
 const { ObjectId } = mongoose.Schema.Types
 
@@ -54,7 +54,7 @@ userSchema.methods.generateJWT = function generateJWT() {
     lastname: this.lastname,
     admin: this.admin,
     access: this.access
-  }, secret,
+  }, jwtSecret,
   { expiresIn: '2d' })
 }
 

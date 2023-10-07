@@ -7,17 +7,23 @@ const email = process.env.SERVICE_EMAIL
 const emailPW = process.env.SERVICE_EMAIL_APP_KEY
 
 // URL of this service.
-const url = process.env.URL
+let url = process.env.URL_DEV
 
 const environment = process.env.NODE_ENV
 
 // Development mode is default.
-let mongoUrl = process.env.MONGODB_URI
+let mongoUrl = process.env.MONGODB_URI_DEV
 
-if      (environment === 'test')       mongoUrl = process.env.TEST_MONGODB_URI
-else if (environment === 'production') mongoUrl = process.env.PRODUCTION_MONGODB_URI
 
-const secret = process.env.SECRET
+if (environment === 'test'){
+  mongoUrl = process.env.MONGODB_URI_TEST
+
+} else if (environment === 'production') {
+  mongoUrl = process.env.MONGODB_URI_PROD
+  url = process.env.URL_PROD
+}
+
+const jwtSecret = process.env.JWT_SECRET
 
 module.exports = {
   mongoUrl,
@@ -26,5 +32,5 @@ module.exports = {
   emailPW,
   url,
   environment,
-  secret
+  jwtSecret
 }

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
-const { secret } = require('../config')
+const { jwtSecret } = require('../config')
 
 // 1. Tokens are added on the blacklist when a user logs out.
 // 2. They are removed from the blacklist when they expire.
@@ -24,7 +24,7 @@ const pruneTokenBlacklist = () => {
   // in filtering them.
   tokenBlacklist = tokenBlacklist.filter(token => {
     try {
-      jwt.verify(token, secret)
+      jwt.verify(token, jwtSecret)
       return true
     
     } catch (error) { return false }
@@ -125,7 +125,7 @@ const requireAuthorization = async (req, res, next) => {
 
       let decodedToken = {}
 
-      decodedToken = jwt.verify(token, secret)
+      decodedToken = jwt.verify(token, jwtSecret)
 
       if (!decodedToken._id) {
           return res.status(401).json({ error: 'invalid token' })
