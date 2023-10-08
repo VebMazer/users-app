@@ -87,7 +87,7 @@ function UserNav() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem className="p-0">
-                <Link to="/services" className="w-full py-1.5 px-2">
+                <Link to="/apps" className="w-full py-1.5 px-2">
                   Palveluiden hallinta
                 </Link>
               </DropdownMenuItem>

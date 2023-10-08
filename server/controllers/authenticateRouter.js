@@ -9,9 +9,9 @@ const authenticateRouter = require('express').Router()
 
 // Local imports.
 const User = require('../models/user')
-const Service = require('../models/service')
+const App = require('../models/app')
 
-// Authenticate user without forwarding them to any service.
+// Authenticate user without forwarding them to any app.
 authenticateRouter.post('/', async (req, res, next) => {
   let { email, password } = req.body
 
@@ -42,18 +42,18 @@ authenticateRouter.post('/', async (req, res, next) => {
   res.status(200).send({ token, ...User.format(user) })
 })
 
-// Authenticate user and authorize them to use a specific service.
+// Authenticate user and authorize them to use a specific app.
 // Returns a key that a client can use to get a token from
-// the service defined in the domain parameter.
-authenticateRouter.post('/:domain', async (req, res, next) => {
+// the app defined with the name parameter.
+authenticateRouter.post('/:name', async (req, res, next) => {
   try {
     let { email, password } = req.body
-    const domain = req.params.domain.toLowerCase()
+    const name = req.params.name.toLowerCase()
 
-    const service = await Service.findOne({ domain })
+    const app = await App.findOne({ name })
 
-    if (!service) {
-      return res.status(401).json({ error: 'unauthorized domain' })
+    if (!app) {
+      return res.status(401).json({ error: 'unauthorized app name' })
     }
 
     if (!email)    return res.status(400).json({ error: 'email is missing' })
@@ -76,27 +76,25 @@ authenticateRouter.post('/:domain', async (req, res, next) => {
     // Sign a token.
     const token = user.generateJWT()
 
-    // Confirm to the service that the user has been authenticated.
+    // Confirm to the app that the user has been authenticated.
     const response = await axios.post(
-      `${service.protocol}://${domain}/api/authorize`,
+      `${app.url}/api/authorize`,
 
       // Send the authentication password, so that
-      // the service knows its the user service that is sending the request.
-      { email, token, service_key: service.serviceKey }
+      // the app knows its the user app that is sending the request.
+      { email, token, app_key: app.appKey }
     )
 
     // Get a one time use user_key that allows the redirected user to get,
-    // their token from the service.
+    // their token from the app.
     const { user_key } = response.data
 
-    // token is used by the user service and the user_key is used by the
-    // service on the domain.
+    // token is used by the users app and the user_key is used by the
+    // app the user will be redirected to.
     res.status(200).send({ token, user_key, ...User.format(user) })
 
-    // Authorization is for the outside domain, token is for the user service.
-
     // After receiving this response on the frontend, redirect the
-    // user to the domain's homepage, with the Authorization header
+    // user to the app's url, with the Authorization header
 
   } catch (exception) {next(exception)}
 })

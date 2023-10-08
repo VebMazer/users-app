@@ -11,7 +11,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
 export default function Register() {
-  const { user, setUser, publicServices } = useStore();
+  const { user, setUser, publicApps } = useStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,15 +21,16 @@ export default function Register() {
 
   const [searchParams] = useSearchParams();
 
-  // /register/?domain=test
-  const domain = searchParams.get("domain");
+  // /register/?app_name=test
+  const app_name = searchParams.get("app_name");
+  // Send app name with the registration request, and redirect to the apps page
+  // after the user has confirmed their email?
 
-  if (domain && !publicServices.find((s) => s.domain === domain)) {
+  if (app_name && !publicApps.find(a => a.name === app_name)) {
     return (
       <main className="px-4 pb-2 pt-4 sm:px-8 sm:py-4">
         <p>
-          URL kentän domain parametrin arvo ei sisällä mitään sallituista
-          sivuista.
+          The app_name parameter on the URL does not contain any of the allowed apps.
         </p>
       </main>
     );

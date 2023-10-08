@@ -33,16 +33,16 @@ const setToken = (newToken) => {
   else token = null;
 };
 
-// Authorize the user to use the service on the domain. Use this
-// function when the user is already logged in to the user-service
+// Authorize the user to use the app. Use this
+// function when the user is already logged in to the user-app
 // and therefore they dont need to authenticate themselves again.
-const authorizeForService = async (domain) => {
-  const response = await axios.get(`${url}/app/${domain}`, config());
+const authorizeForApp = async app_name => {
+  const response = await axios.get(`${url}/app/${app_name}`, config());
 
   return response.data;
 };
 
-// Logout the user from the user-service.
+// Logout the user from the user-app.
 const logout = async () => {
   const response = await axios.get(`${url}/logout`, config());
 
@@ -51,4 +51,4 @@ const logout = async () => {
   return response.data;
 };
 
-export default { setToken, authorizeForService, logout };
+export default { setToken, authorizeForApp, logout };

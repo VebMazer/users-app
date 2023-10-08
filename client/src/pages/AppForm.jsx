@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
-import servicesApi from "../api/services";
+import appsApi from "../api/apps";
 import { useStore } from "../utils/store";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -40,14 +40,13 @@ function uuidv4() {
     );
 }
 
-// A form page for adding and editing services.
-export default function ServiceForm() {
-    const { user, services, setServices } = useStore();
+// A form page for adding and editing apps.
+export default function AppForm() {
+    const { user, apps, setApps } = useStore();
 
-    const [name, setName] = useState("");
-    const [domain, setDomain] = useState("");
-    const [protocol, setProtocol] = useState("https");
-    const [serviceKey, setServiceKey] = useState("");
+    const [name,    setName]    = useState("");
+    const [url,     setUrl]     = useState("");
+    const [appKey,  setAppKey]  = useState("");
     const [editing, setEditing] = useState(false);
 
     const navigate = useNavigate();
@@ -59,14 +58,13 @@ export default function ServiceForm() {
     //TODO:after refresh, the form is empty
     useEffect(() => {
         if (editing === true) {
-            const service = services.find((s) => s._id === id);
+            const app = apps.find((s) => s._id === id);
 
-            if (!service) return;
+            if (!app) return;
 
-            setName(service.name);
-            setDomain(service.domain);
-            setProtocol(service.protocol);
-            setServiceKey(service.serviceKey);
+            setName(app.name);
+            setUrl(app.url);
+            setAppKey(app.appKey);
         }
     }, [editing]);
 
@@ -87,29 +85,28 @@ export default function ServiceForm() {
     const onSubmit = (event) => {
         event.preventDefault();
 
-        const serviceObject = {
+        const appObject = {
             name,
-            domain,
-            protocol,
-            serviceKey,
+            url,
+            appKey,
         };
 
         if (editing) {
-            servicesApi
-                .update(id, serviceObject)
-                .then((returnedService) => {
-                    setServices(
-                        services.map((s) => (s._id !== id ? s : returnedService)),
+            appsApi
+                .update(id, appObject)
+                .then((returnedApp) => {
+                    setApps(
+                        apps.map((s) => (s._id !== id ? s : returnedApp)),
                     );
-                    navigate("/services");
+                    navigate("/apps");
                 })
                 .catch((error) => console.log("error: ", error));
         } else {
-            servicesApi
-                .create(serviceObject)
-                .then((returnedService) => {
-                    setServices(services.concat(returnedService));
-                    navigate("/services");
+            appsApi
+                .create(appObject)
+                .then((returnedApp) => {
+                    setApps(apps.concat(returnedApp));
+                    navigate("/apps");
                 })
                 .catch((error) => console.log("error: ", error));
         }
@@ -120,12 +117,12 @@ export default function ServiceForm() {
             <div className={clsx("flex flex-col", id !== "new" ? "gap-4" : "gap-2")}>
                 <h2 className="text-xl font-bold">
                     {id !== "new"
-                        ? "Muokkaa sovelluksen tietoja"
-                        : "Lisää uusi sovellus Virittämö portaaliin"}
+                        ? "Edit app details"
+                        : "Add a new app to the portal"}
                 </h2>
                 {id === "new" && (
                     <p className="text-sm opacity-70 pb-3">
-                        Sovellukset ovat portaaliin lisättäviä lisäominaisuuksia.
+                        Applications are independent apps, added to the portal SSO system.
                     </p>
                 )}
                 <form onSubmit={onSubmit} className="flex flex-col gap-3 max-w-md">
@@ -133,9 +130,9 @@ export default function ServiceForm() {
                         <div className="flex items-center gap-1">
                             <Label htmlFor="name">Palvelun nimi</Label>
                             <HelpMe>
-                                Anna lisättävälle sovellukselle nimi esim.
-                                `kauppakassi-sovellus` pienillä kirjaimilla. Sovelukset ovat
-                                portaaliin lisättäviä lisäominaisuuksia.{" "}
+                                Give the application to be added a name, for example `shoppingcart-app'
+                                in lowercase letters. Dont use spaces, because it needs to be passable
+                                as a url parameter.
                             </HelpMe>
                         </div>
                         <Input
@@ -148,56 +145,42 @@ export default function ServiceForm() {
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-1">
-                            <Label htmlFor="domain">Palvelun domain</Label>
+                            <Label htmlFor="url">App url</Label>
                             <HelpMe>
-                                Anna sovelluksen subdomain- tai domain-osoite esim.
-                                `kuutio.intranet.com`, joka viitaa sovelluksen sijaintiin
-                                palvelimella tai pilvipalvelussa.
+                                Give the url of the app, for example: `https://test.com/app1`,
+                                which points to the location of the app on the internet.
                             </HelpMe>
                         </div>
                         <Input
                             type="text"
-                            id="domain"
+                            id="url"
                             placeholder="kuutio.intranet.com"
-                            value={domain}
-                            onChange={(event) => setDomain(event.target.value)}
+                            value={url}
+                            onChange={(event) => setUrl(event.target.value)}
                         />
                     </div>
                     <div className="flex flex-col gap-2 w-96 max-w-sm">
                         <div className="flex items-center gap-1">
-                            <Label htmlFor="serviceKey">Palvelun avain</Label>
+                            <Label htmlFor="appKey">App key</Label>
                             <HelpMe>
-                                Luo uniikki sovelusavain käyttäen auto generate-toimintoa tai
-                                käsin syöttämällä. Avainta voi muokata myöhemmin. Avain
-                                syötetään sovelluksen ympäristömuuttujiin .env-tiedostoon.
+                                Create a unique app key using the auto generate function or
+                                manually. The key can be edited later. The key is entered into
+                                the environment variables of the application in the .env file.
                             </HelpMe>
                         </div>
                         <div className="flex w-full max-w-sm items-center gap-x-2">
-                            <Input id="serviceKey" value={serviceKey} onChange={(event) => setServiceKey(event.target.value)} className="w-full" />
+                            <Input id="appKey" value={appKey} onChange={(event) => setAppKey(event.target.value)} className="w-full" />
                             <Button
                                 variant="ghost"
                                 type="button"
-                                onClick={() => setServiceKey(uuidv4())}
+                                onClick={() => setAppKey(uuidv4())}
                             >
                                 <RefreshCw className="w-4 h-4" />
                                 <span className="sr-only">Luo uusi avain</span>
                             </Button>
                         </div>
                     </div>
-                    <RadioGroup value={protocol} onValueChange={setProtocol}>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="https" id="r2" />
-                            <Label htmlFor="r2">https</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="http" id="r1" />
-                            <div className="flex items-center gap-1">
-                                <Label htmlFor="r1">http</Label>
-                                <HelpMe>käytä vain kehitysversiossa</HelpMe>
-                            </div>
-                        </div>
-                    </RadioGroup>
-                    <Button type="submit">Tallenna</Button>
+                    <Button type="submit">Save</Button>
                 </form>
             </div>
         </main>

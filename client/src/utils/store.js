@@ -5,17 +5,17 @@ export const useStore = create((set) => ({
   // initial state variables
   user: null,
 
-  // Services here do not contain serviceKey
-  publicServices: [],
+  // Apps here do not contain appKey
+  publicApps: [],
 
-  // Services here contain the serviceKey
-  services: [],
+  // Apps here contain the appKey
+  apps: [],
 
   users: [],
 
   // actions
   setUser: (user) => set({ user }),
-  setPublicServices: (publicServices) => set({ publicServices }),
-  setServices: (services) => set({ services }),
+  setPublicApps: (publicApps) => set({ publicApps }),
+  setApps: (apps) => set({ apps }),
   setUsers: (users) => set({ users }),
 }));

@@ -6,7 +6,7 @@ const port = process.env.PORT
 const email = process.env.SERVICE_EMAIL
 const emailPW = process.env.SERVICE_EMAIL_APP_KEY
 
-// URL of this service.
+// URL of this app.
 let url = process.env.URL_DEV
 
 const environment = process.env.NODE_ENV

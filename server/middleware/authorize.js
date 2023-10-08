@@ -89,7 +89,7 @@ const setUserUsingToken = (decodedToken, res) => {
 }
 
 // Getting the user information from the database, requires
-// a database request. This would run for every service request
+// a database request. This would run for every app request
 const setUserUsingDatabase = async (decodedToken, res, next) => {
   try {
   const user = await User.findById(decodedToken._id)
@@ -138,7 +138,7 @@ const requireAuthorization = async (req, res, next) => {
       // replace the above with the line below to use the database
       // instead of the token, so that access right updates are
       // immediately available. This will add to the total response
-      // time of every service request in the intranet/portal network.
+      // time of every app request in the intranet/portal network.
       //await setUserUsingDatabase(decodedToken, res, next)
 
       next()

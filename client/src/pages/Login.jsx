@@ -12,7 +12,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 
 export default function Login() {
-  const { user, publicServices, setUser } = useStore();
+  const { user, publicApps, setUser } = useStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,34 +21,34 @@ export default function Login() {
 
   const [searchParams] = useSearchParams();
 
-  // url/?domain=example.com
-  const domain = searchParams.get("domain");
+  // url/?app_name=example.com
+  const app_name = searchParams.get("app_name");
 
   useEffect(() => {
-    if (user && domain && publicServices.find((s) => s.domain === domain)) {
-      // If the user is already logged in and the domain parameter is specified,
-      // redirect the user to the external service with the service key.
-      authorizeAndRedirectUserToService();
+    if (user && app_name && publicApps.find(a => a.name === app_name)) {
+      // If the user is already logged in and the app_name parameter is specified,
+      // redirect the user to the external app with the user_key.
+      authorizeAndRedirectUserToApp();
     }
-  }, [publicServices.length, user]);
+  }, [publicApps.length, user]);
 
-  const authorizeAndRedirectUserToService = async () => {
-    const data = await authorizeApi.authorizeForService(domain);
-    const service = publicServices.find((s) => s.domain === domain);
+  const authorizeAndRedirectUserToApp = async () => {
+    const data = await authorizeApi.authorizeForApp(app_name);
+    const app = publicApps.find(a => a.name === app_name);
 
-    if (!service) return console.log("service not found for domain: ", domain);
+    if (!app) return console.log("app not with name: ", app_name);
 
-    const protocol = service.protocol;
-
-    window.location.href = `${protocol}://${domain}/?user_key=${data.user_key}`;
+    // Redirect the user with the user key to the app.
+    window.location.href = `${app.url}/?user_key=${data.user_key}`;
   };
 
-  if (domain && !publicServices.find((s) => s.domain === domain)) {
+  if (app_name && !publicApps.find(a => a.name === app_name)) {
+    // If the app_name parameter is specified but a corresponding app is
+    // not found from the available apps.
     return (
       <main className="px-4 pb-2 pt-4 sm:px-8 sm:py-4">
         <p>
-          URL kentän domain parametrin arvo ei sisällä mitään sallituista
-          sivuista.
+          The app_name parameter on the URL does not contain any of the allowed apps.
         </p>
       </main>
     );
@@ -73,11 +73,11 @@ export default function Login() {
     let authenticatedUser = null;
 
     try {
-      if (domain) {
-        // If an external service was specified with the domain parameter.
-        authenticatedUser = await authenticateApi.authenticateForService(
+      if (app_name) {
+        // If an external app was specified with the app_name parameter.
+        authenticatedUser = await authenticateApi.authenticateForApp(
           credentials,
-          domain,
+          app_name,
         );
       } else {
         authenticatedUser = await authenticateApi.authenticate(credentials);
@@ -99,19 +99,17 @@ export default function Login() {
 
       setUser(authenticatedUser);
 
-      if (domain) {
-        // If an external service was specified with the domain parameter.
-        const service = publicServices.find((s) => s.domain === domain);
+      if (app_name) {
+        // If an external app was specified with the app_name parameter.
+        const app = publicApps.find(a => a.name === app_name);
 
-        if (!service)
-          return console.log("service not found for domain: ", domain);
+        if (!app) return console.log("app not found with app_name: ", app_name);
 
-        const protocol = service.protocol;
-
-        window.location.href = `${protocol}://${domain}/?user_key=${authenticatedUser.user_key}`;
+        window.location.href = `${app.url}/?user_key=${authenticatedUser.user_key}`;
+      
       } else navigate("/");
     } else alert("Failed to login. Wrong email or password?");
-  };
+  }
 
   return (
     <main className="flex flex-col grow justify-center items-center gap-3 px-4 pb-2 pt-4 sm:px-8 sm:py-4">

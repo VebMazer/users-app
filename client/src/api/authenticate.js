@@ -15,10 +15,10 @@ const authenticate = async (credentials) => {
   return response.data;
 };
 
-const authenticateForService = async (credentials, domain) => {
-  const response = await axios.post(`${url}/${domain}`, credentials);
+const authenticateForApp = async (credentials, app_name) => {
+  const response = await axios.post(`${url}/${app_name}`, credentials);
 
   return response.data;
 };
 
-export default { authenticate, authenticateForService };
+export default { authenticate, authenticateForApp };

@@ -1,16 +1,10 @@
 const userRouter = require('express').Router()
 const User = require('../models/user')
-const Service = require('../models/service')
+const App = require('../models/app')
 const bcrypt = require('bcrypt')
 const { requireAuthorization, userIsAdmin } = require('../middleware/authorize')
 const { environment } = require('../config.js')
 
-const virittamoEmail = email => {
-  if (email.endsWith('@edu.hel.fi')) return true
-  if (email.endsWith('@hel.fi'))     return true
-
-  return false
-}
 
 // Validate password, to contain at least one number, one lowercase letter,
 // one uppercase letter and to be at least 10 characters long.
@@ -34,19 +28,19 @@ const validatePassword = password => {
 
 const addAccessLevel = async (user, level) => {
   try {
-    const services = await Service.find({})
+    const apps = await App.find({})
 
-    user.access = services.map(service => ({
-      service: service._id,
+    user.access = apps.map(app => ({
+      app: app._id,
       level,
-      name: service.name
+      name: app.name
     }))
 
   } catch (exception) { next(exception) }
 }
 
 // Register a new user.
-userRouter.post('/', async (req, res) => {
+userRouter.post('/', async (req, res, next) => {
   try {
     let { email, password, firstname, lastname } = req.body
 
@@ -55,18 +49,11 @@ userRouter.post('/', async (req, res) => {
 
     email = email.toLowerCase()
 
-    // When in production mode, check if the email is valid for virittamo.
-    // if (environment === 'production' && !virittamoEmail(email)) {
-    //   return res.status(400).json({
-    //     error: 'email must end with @edu.hel.fi or @hel.fi'
-    //   })
-    // }
-
-    // if(!validatePassword(password)) {
-    //   return res.status(400).json({
-    //     error: 'password must be at least 10 characters long and contain at least one number, one lowercase letter and one uppercase letter.'
-    //   })
-    // }
+    if(environment === 'production' && !validatePassword(password)) {
+      return res.status(400).json({
+        error: 'password must be at least 10 characters long and contain at least one number, one lowercase letter and one uppercase letter.'
+      })
+    }
 
     const saltRounds = 12
     const passwordHash = await bcrypt.hash(password, saltRounds)
@@ -79,7 +66,7 @@ userRouter.post('/', async (req, res) => {
       access: []
     })
 
-    // Add access level 1 by default to all services.
+    // Add access level 1 by default to all apps.
     await addAccessLevel(user, 1)
 
     const savedUser = await user.save()
@@ -93,6 +80,7 @@ userRouter.post('/', async (req, res) => {
     } else {
       res.status(500).json({ error: 'something went wrong...' })
     }
+    next(exception)
   }
 })
 

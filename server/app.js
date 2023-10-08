@@ -18,7 +18,7 @@ const userRouter          = require('./controllers/userRouter')
 const authorizeRouter     = require('./controllers/authorizeRouter')
 const authenticateRouter  = require('./controllers/authenticateRouter')
 const passwordResetRouter = require('./controllers/passwordResetRouter')
-const serviceRouter       = require('./controllers/serviceRouter')
+const appRouter           = require('./controllers/appRouter')
 
 const app = express()
 
@@ -39,7 +39,7 @@ app.get('/api', (req, res) => {
 
 // Add routers.
 app.use('/api/users',        userRouter)
-app.use('/api/services',     serviceRouter)
+app.use('/api/apps',         appRouter)
 app.use('/api/authorize',    authorizeRouter)
 app.use('/api/authenticate', authenticateRouter)
 app.use('/api/reset',        passwordResetRouter)

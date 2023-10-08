@@ -1,7 +1,7 @@
 {
   "name": "users",
   "version": "1.0.0",
-  "description": "User service that handles user authentication, authorization and access control management for other apps.",
+  "description": "User app that handles user authentication, authorization and access control management for other apps.",
   "main": "index.js",
   "scripts": {
     "start": "cd server && npm start",

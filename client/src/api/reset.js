@@ -10,7 +10,7 @@ axiosRetry(axios, {
 
 const reset = async (user) => {
   try {
-    console.log("Trying reset service for: ", user);
+    console.log("Trying reset app for: ", user);
     const response = await axios.post(`${apiUrl}/reset`, user);
 
     console.log("Reset succeeded : " + response.data);
@@ -19,7 +19,7 @@ const reset = async (user) => {
   } catch (exception) {
     console.log(exception._message);
 
-    console.log("reset service failed : " + exception);
+    console.log("reset app failed : " + exception);
 
     return { error: "Reset failed" };
   }

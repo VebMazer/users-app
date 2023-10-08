@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import servicesApi from "../api/services";
+import appsApi from "../api/apps";
 import { useStore } from "../utils/store";
 import { Button } from "../components/ui/button";
 import {
@@ -27,8 +27,8 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 
-function MoreOptions({ service }) {
-  const { services, setServices } = useStore();
+function MoreOptions({ app }) {
+  const { apps, setApps } = useStore();
   const navigate = useNavigate();
 
   return (
@@ -43,16 +43,16 @@ function MoreOptions({ service }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem onClick={() => navigate(`/services/${service._id}`)}>
+        <DropdownMenuItem onClick={() => navigate(`/apps/${app._id}`)}>
           muokkaa
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            servicesApi
-              .remove(service._id)
+            appsApi
+              .remove(app._id)
               .then(() => {
-                setServices(services.filter((s) => s._id !== service._id));
+                setApps(apps.filter((s) => s._id !== app._id));
               })
               .catch((error) => console.log("error: ", error));
           }}
@@ -64,7 +64,7 @@ function MoreOptions({ service }) {
   );
 }
 
-function CopyToClip({ service }) {
+function CopyToClip({ app }) {
   const [copy, setCopy] = useState(false);
   const copyUrlToClipboard = (key) => {
     setCopy(true);
@@ -74,17 +74,17 @@ function CopyToClip({ service }) {
 
   return (
     <>
-      {service.showServiceKey ? (
+      {app.showAppKey ? (
         <button
           className="max-w-[100px] whitespace-nowrap"
-          onClick={() => copyUrlToClipboard(service.serviceKey)}
+          onClick={() => copyUrlToClipboard(app.appKey)}
         >
-          <p>{copy ? "kopioitu" : service.serviceKey}</p>
+          <p>{copy ? "kopioitu" : app.appKey}</p>
         </button>
       ) : (
         <button
           className=""
-          onClick={() => copyUrlToClipboard(service.serviceKey)}
+          onClick={() => copyUrlToClipboard(app.appKey)}
         >
           <p>{copy ? "kopioitu" : "********"}</p>
         </button>
@@ -93,16 +93,16 @@ function CopyToClip({ service }) {
   );
 }
 
-function ServiceItems() {
-  const services = useStore((state) => state.services);
-  const setServices = useStore((state) => state.setServices);
+function AppItems() {
+  const apps = useStore((state) => state.apps);
+  const setApps = useStore((state) => state.setApps);
 
-  const showOrHideServiceKey = (service) => {
-    service.showServiceKey = !service.showServiceKey;
+  const showOrHideAppKey = (app) => {
+    app.showAppKey = !app.showAppKey;
 
-    setServices(services);
+    setApps(apps);
   };
-  if (!services || services.length === 0) {
+  if (!apps || apps.length === 0) {
     return (
       <TableRow>
         <TableCell>0 Sovellusta</TableCell>
@@ -112,21 +112,20 @@ function ServiceItems() {
 
   return (
     <>
-      {services.map((service) => (
-        <TableRow key={service._id}>
-          <TableCell>{service.name}</TableCell>
-          <TableCell>{service.protocol}</TableCell>
-          <TableCell>{service.domain}</TableCell>
+      {apps.map((app) => (
+        <TableRow key={app._id}>
+          <TableCell>{app.name}</TableCell>
+          <TableCell>{app.url}</TableCell>
           <TableCell className="overflow-hidden">
-            <CopyToClip service={service} />
+            <CopyToClip app={app} />
           </TableCell>
           <TableCell className="flex gap-5">
             <Button
               variant="ghost"
               className="p-2"
-              onClick={() => showOrHideServiceKey(service)}
+              onClick={() => showOrHideAppKey(app)}
             >
-              {service.showServiceKey ? (
+              {app.showAppKey ? (
                 <EyeOffIcon className="h-5 w-5" />
               ) : (
                 <EyeIcon className="h-5 w-5" />
@@ -134,7 +133,7 @@ function ServiceItems() {
             </Button>
           </TableCell>
           <TableCell>
-            <MoreOptions service={service} />
+            <MoreOptions app={app} />
           </TableCell>
         </TableRow>
       ))}
@@ -142,19 +141,19 @@ function ServiceItems() {
   );
 }
 
-export default function Services() {
-  const { user, setServices } = useStore();
+export default function Apps() {
+  const { user, setApps } = useStore();
 
   const navigate = useNavigate();
 
-  const getServices = async () => {
+  const getApps = async () => {
     if (user && user.admin) {
       try {
-        let serviceEntries = await servicesApi.getAll();
+        let appEntries = await appsApi.getAll();
 
-        serviceEntries.forEach((s) => (s.showServiceKey = false));
+        appEntries.forEach((s) => (s.showAppKey = false));
 
-        setServices(serviceEntries);
+        setApps(appEntries);
       } catch (exception) {
         console.log("exception: ", exception);
       }
@@ -162,17 +161,17 @@ export default function Services() {
   };
 
   useEffect(() => {
-    getServices();
+    getApps();
   }, [user]);
 
   if (!user || !user.admin) {
     return (
       <main className="flex flex-col grow justify-center items-center gap-2 px-4 pb-2 pt-4 sm:px-8 sm:py-4">
         <h2 className="text-3xl">
-          Vain järjestelmänvalvojilla on oikeus käyttää tätä sivua.
+          Only Portal administrators have access to this page.
         </h2>
         <Link to="/" className="opacity-70 hover:opacity-100 hover:underline">
-          Mene takasin etusivulle
+          Go back to the front page.
         </Link>
       </main>
     );
@@ -181,33 +180,32 @@ export default function Services() {
   return (
     <main className="flex flex-col justify-center items-center px-4 pb-2 pt-4 sm:px-8 sm:py-4">
       <div className="flex flex-col items-start w-full max-w-5xl gap-2">
-        <h2 className="text-3xl">Intranetin Palveluiden Hallinta</h2>
+        <h2 className="text-3xl">Portal App Management</h2>
         <p className="opacity-70">
-          Tällä sivulla järjestelmänvalvoja voi lisätä, poistaa ja muokata
-          järjestelmään kuuluvia palveluita ja säätää näiden käyttöoikeuksia.
+          In this page a Portal administrator can add, remove and edit apps
+          belonging to the portal and adjust their permissions.
         </p>
         <Button
           variant="outline"
           className=""
-          onClick={() => navigate("/services/new")}
+          onClick={() => navigate("/apps/new")}
         >
           <PlusIcon />
-          <span className="sr-only">Lisää palvelu</span>
+          <span className="sr-only">Add application</span>
         </Button>
         <Table>
-          <TableCaption>Lista Intranetin Palveluista</TableCaption>
+          <TableCaption>List of Portal apps</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-56">Nimi</TableHead>
-              <TableHead className="w-20">Protokolla</TableHead>
-              <TableHead className="w-56">Domain</TableHead>
-              <TableHead className="w-40">Avain</TableHead>
+              <TableHead className="w-56">Name</TableHead>
+              <TableHead className="w-56">Url</TableHead>
+              <TableHead className="w-40">Key</TableHead>
               <TableHead className="w-10"></TableHead>
               <TableHead className="w-10 text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <ServiceItems />
+            <AppItems />
           </TableBody>
         </Table>
       </div>

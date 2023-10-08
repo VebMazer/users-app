@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import servicesApi from '../api/services'
+import appsApi from '../api/apps'
 import usersApi from '../api/users'
 import { useStore } from '../utils/store'
 import {
@@ -48,20 +48,20 @@ const accessLevels = [
 ]
 
 function SetAccessLevel({ user }) {
-    const { services, users, setUsers } = useStore()
+    const { apps, users, setUsers } = useStore()
 
     const [accessLevel, setAccessLevel] = useState(1)
-    const [service, setService] = useState(services[0])
+    const [app, setApp] = useState(apps[0])
 
     const uploadAccessLevel = async () => {
         try {
-            const access = user.access.find(a => a.service === service._id)
+            const access = user.access.find(a => a.app === app._id)
 
             if (access) access.level = accessLevel
             else {
                 user.access.push({
-                    service: service._id,
-                    name: service.name,
+                    app: app._id,
+                    name: app.name,
                     level: accessLevel
                 })
             }
@@ -105,7 +105,7 @@ function SetAccessLevel({ user }) {
                     </Label>
                     <Select
                         onValueChange={(value) =>
-                            setService(services.find(s => s._id === value))
+                            setApp(apps.find(s => s._id === value))
                         }>
                         <SelectTrigger className="w-52">
                             <SelectValue placeholder="Valitse sovellus" />
@@ -113,7 +113,7 @@ function SetAccessLevel({ user }) {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Sovellus</SelectLabel>
-                                {services.map(s => <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>)}
+                                {apps.map(s => <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>)}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -185,9 +185,9 @@ export default function Users() {
     const {
         user,
         users,
-        services,
+        apps,
         setUsers,
-        setServices
+        setApps
     } = useStore()
 
     const loadUsers = useCallback(async () => {
@@ -199,10 +199,10 @@ export default function Users() {
         }
     }, [user])
 
-    const loadServices = useCallback(async () => {
+    const loadApps = useCallback(async () => {
         if (user && user.admin) {
             try {
-                setServices(await servicesApi.getAll())
+                setApps(await appsApi.getAll())
 
             } catch (exception) { console.log('exception: ', exception) }
         }
@@ -210,7 +210,7 @@ export default function Users() {
 
     useEffect(() => {
         loadUsers()
-        loadServices()
+        loadApps()
     }, [user])
 
     if (!user || !user.admin) {
@@ -250,15 +250,15 @@ export default function Users() {
                                 <TableCell>
                                     <ul className="flex flex-col">
                                         {u.access.map((a) => {
-                                            const service = services.find(s => s._id === a.service)
+                                            const app = apps.find(s => s._id === a.app)
 
                                             const access = accessLevels.find((level) => level.accessLevel === a.level)
 
-                                            if (!service) return null
+                                            if (!app) return null
 
                                             return (
-                                                <li key={a.service + u._id}>
-                                                    {service.name}: {access?.role}
+                                                <li key={a.app + u._id}>
+                                                    {app.name}: {access?.role}
                                                 </li>
                                             )
                                         })}

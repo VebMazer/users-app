@@ -104,7 +104,7 @@ pwResetRouter.post('/', async (req, res, next) => {
 
     // gmail
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      app: 'gmail',
       auth: {
         user: config.email,
         pass: config.emailPW
