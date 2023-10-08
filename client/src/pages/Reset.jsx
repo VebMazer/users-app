@@ -41,10 +41,14 @@ export default function Reset() {
   return (
     <main className="flex flex-col min-h-0 grow justify-center items-center gap-3 px-4 pb-2 pt-4 sm:px-8 sm:py-4">
       <div className="flex flex-col w-full max-w-xs gap-4">
-        <h2 className="text-xl">Vaihda salasanaa</h2>
+        <h2 className="text-xl">Change your password</h2>
+        <p className="text-xs opacity-70">
+          A link will be sent to your email that will allow you to change
+          your password.
+        </p>
         <form onSubmit={resetPassword} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label>Sähköposti</Label>
+            <Label>Email</Label>
             <Input
               type="text"
               value={email}
@@ -52,7 +56,7 @@ export default function Reset() {
               className="textInput"
             />
           </div>
-          <Button type="submit">Vaihda salasana</Button>
+          <Button type="submit">Change password</Button>
         </form>
       </div>
     </main>

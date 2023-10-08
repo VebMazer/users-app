@@ -137,17 +137,17 @@ export function Navbar() {
         href={portalUrl}
         className="relative whitespace-nowrap text-2xl font-title font-bold"
       >
-        Virittämö{" "}
+        Portal{" "}
         <sup className="absolute left-[calc(100%+.25rem)] top-0 text-xs font-extrabold text-gray-400">
-          [portaali]
+          [Veikko's apps]
         </sup>
       </a>
       <nav className="flex items-center gap-3">
         <ModeToggle />
         {pathname === "/register" ? (
-          <Link to="/">Kirjaudu sisään</Link>
+          <Link to="/">Log In</Link>
         ) : (
-          <Link to="/register">Rekisteröidy</Link>
+          <Link to="/register">Register</Link>
         )}
       </nav>
     </header>

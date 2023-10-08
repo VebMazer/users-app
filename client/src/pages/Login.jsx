@@ -57,7 +57,7 @@ export default function Login() {
   if (user) {
     return (
       <main className="px-4 pb-2 pt-4 sm:px-8 sm:py-4">
-        <p>Olet kirjautunut sisään email: {user.email}</p>
+        <p>You have logged in with email: {user.email}</p>
       </main>
     );
   }
@@ -116,13 +116,14 @@ export default function Login() {
   return (
     <main className="flex flex-col grow justify-center items-center gap-3 px-4 pb-2 pt-4 sm:px-8 sm:py-4">
       <div className="flex flex-col w-full max-w-xs gap-2">
-        <h2 className="text-xl">Kirjaudu Sisään Intranettiin</h2>
+        <h2 className="text-xl">Login to Portal Apps</h2>
         <p className="text-xs opacity-70">
-          Muista käyttää etunimi.sukunimi@edu.hel.fi sähköpostia
+          If you were redirected from another portal app, you will be redirected back to it
+          after you log in.
         </p>
         <form onSubmit={loginButton} className="flex flex-col gap-4">
           <div className="">
-            <Label htmlFor="email">Sähköposti</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="text"
@@ -131,7 +132,7 @@ export default function Login() {
             />
           </div>
           <div className="">
-            <Label htmlFor="password">Salasana</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
@@ -139,11 +140,11 @@ export default function Login() {
               onChange={(event) => setPassword(event.target.value)}
             />
           </div>
-          <Button type="submit">Kirjaudu sisään</Button>
+          <Button type="submit">Log In</Button>
         </form>
         <div className="flex flex-col pt-3">
           <Link to="/resetpassword" className="loginLink">
-            Unohditko salasanan?
+            Forgot Password?
           </Link>
         </div>
       </div>

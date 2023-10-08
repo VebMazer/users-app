@@ -99,14 +99,14 @@ export default function Register() {
     <main className="flex flex-col min-h-0 flex-1 gap-3 px-4 pb-2 pt-4 sm:px-8 sm:py-4">
       <div className="flex flex-col grow justify-center items-center">
         <div className="flex flex-col w-full max-w-xs gap-2">
-          <h2 className="text-xl">Luo käyttäjä Intranettiin</h2>
+          <h2 className="text-xl">Create a Portal account</h2>
 
           <p className="text-xs opacity-70">
-            Muista käyttää etunimi.sukunimi@edu.hel.fi sähköpostia
+            Your email will be verified to complete your registration.
           </p>
           <form onSubmit={registerAndLogin} className="flex flex-col gap-3">
             <div className="">
-              <Label htmlFor="email">Sähköposti</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="text"
@@ -116,7 +116,7 @@ export default function Register() {
               />
             </div>
             <div className="">
-              <Label htmlFor="password">Salasana</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -126,7 +126,7 @@ export default function Register() {
               />
             </div>
             <div className="">
-              <Label htmlFor="confirm">Salasana uudelleen</Label>
+              <Label htmlFor="confirm">Retype password</Label>
               <Input
                 id="confirm"
                 type="password"
@@ -135,7 +135,7 @@ export default function Register() {
                 className="textInput"
               />
             </div>
-            <Button type="submit">Rekisteröidy</Button>
+            <Button type="submit">Register</Button>
           </form>
         </div>
       </div>
