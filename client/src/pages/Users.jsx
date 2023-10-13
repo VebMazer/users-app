@@ -60,8 +60,7 @@ function SetAccessLevel({ user }) {
             if (access) access.level = accessLevel
             else {
                 user.access.push({
-                    app: app._id,
-                    name: app.name,
+                    appName: app.name,
                     level: accessLevel
                 })
             }
@@ -159,7 +158,7 @@ function TableOptions({ u }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[160px]">
                         <DialogTrigger asChild>
-                            <DropdownMenuItem>Määritä</DropdownMenuItem>
+                            <DropdownMenuItem>Define</DropdownMenuItem>
                         </DialogTrigger>
                         <DropdownMenuItem onClick={() => toggleAdmin(u)} >
                             {u.admin ? 'Remove admin access' : 'Add admin access'}
@@ -237,9 +236,9 @@ export default function Users() {
                     <TableCaption>Lista Käyttöoikeuksita käyttäjillä</TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px]">Sähköposti</TableHead>
-                            <TableHead>Käyttöoikeustasot</TableHead>
-                            <TableHead>Rooli</TableHead>
+                            <TableHead className="w-[100px]">Email</TableHead>
+                            <TableHead>Access levels</TableHead>
+                            <TableHead>Role</TableHead>
                             <TableHead className="text-right"></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -257,8 +256,8 @@ export default function Users() {
                                             if (!app) return null
 
                                             return (
-                                                <li key={a.app + u._id}>
-                                                    {app.name}: {access?.role}
+                                                <li key={a.appName + u._id}>
+                                                    {a.appName}: {access?.role}
                                                 </li>
                                             )
                                         })}

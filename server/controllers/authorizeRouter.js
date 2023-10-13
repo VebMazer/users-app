@@ -88,7 +88,7 @@ authorizeRouter.get('/app/:name/:level', async (req, res, next) => {
     let { name, level } = req.params
     level = parseInt(level)
 
-    let access = user.access.find(a => a.name === name)
+    let access = user.access.find(a => a.appName === name)
 
     if (!access) {
       // In case the app name is not defined in the token.
