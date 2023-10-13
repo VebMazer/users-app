@@ -1,7 +1,7 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
 
-import commonApp from "./common";
+import commonApi from "./common";
 import { config } from "./authorize";
 import { apiUrl } from "../config";
 
@@ -20,9 +20,9 @@ const getAllPublic = async () => {
   return response.data;
 };
 
-const getAll = async () => commonApp.getAll(app);
-const create = async (object) => commonApp.post(object, app);
-const update = async (id, object) => commonApp.put(id, object, app);
-const remove = async (id) => commonApp.del(id, app);
+const getAll = async () =>           commonApi.getAll(app);
+const create = async object =>       commonApi.post(object, app);
+const update = async (id, object) => commonApi.put(id, object, app);
+const remove = async id =>           commonApi.del(id, app);
 
 export default { getAllPublic, getAll, create, update, remove };

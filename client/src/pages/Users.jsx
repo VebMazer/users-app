@@ -76,43 +76,43 @@ function SetAccessLevel({ user }) {
     return (
         <DialogContent className="sm:max-w-md">
             <DialogHeader>
-                <DialogTitle className=''>Määritä käytäjäkohtaiset Käyttöoikeudet sovelluksiin</DialogTitle>
+                <DialogTitle className=''>Define user specific access to apps</DialogTitle>
                 <DialogDescription>
-                    Tee muutoksia käyttäjän käyttöoikeuksiin. Paina Tallenna, kun olet valmis.
+                    Chane access user access levels. Press Save when you are ready.
                 </DialogDescription>
             </DialogHeader>
             <div className="flex items-end gap-4 py-4">
                 <div className='flex flex-col gap-2'>
-                    <Label htmlFor="kayttooikeustaso" className="">
-                        Käyttöoikeustaso
+                    <Label htmlFor="access level" className="">
+                        Access level
                     </Label>
 
                     <Select onValueChange={(value) => setAccessLevel(value)}>
                         <SelectTrigger className="w-44">
-                            <SelectValue placeholder="Valitse käyttötaso" />
+                            <SelectValue placeholder="Select access level" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel>käyttötaso</SelectLabel>
+                                <SelectLabel>access level</SelectLabel>
                                 {accessLevels.map((access) => <SelectItem key={access.accessLevel} value={access.accessLevel}>{access.role}</SelectItem>)}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Label htmlFor="kayttooikeustaso" className="">
-                        Sovellus
+                    <Label htmlFor="access level" className="">
+                        Application
                     </Label>
                     <Select
                         onValueChange={(value) =>
                             setApp(apps.find(s => s._id === value))
                         }>
                         <SelectTrigger className="w-52">
-                            <SelectValue placeholder="Valitse sovellus" />
+                            <SelectValue placeholder="Select application" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel>Sovellus</SelectLabel>
+                                <SelectLabel>Application</SelectLabel>
                                 {apps.map(s => <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>)}
                             </SelectGroup>
                         </SelectContent>
@@ -120,11 +120,11 @@ function SetAccessLevel({ user }) {
                 </div>
             </div>
             <DialogFooter>
-                <Button variant='destructive' onClick={() => console.log('poista')}>
-                    Poista
+                <Button variant='destructive' onClick={() => console.log('remove')}>
+                    Remove
                 </Button>
                 <Button variant='default' onClick={uploadAccessLevel}>
-                    Tallenna
+                    Save
                 </Button>
             </DialogFooter>
         </DialogContent>
@@ -162,11 +162,11 @@ function TableOptions({ u }) {
                             <DropdownMenuItem>Määritä</DropdownMenuItem>
                         </DialogTrigger>
                         <DropdownMenuItem onClick={() => toggleAdmin(u)} >
-                            {u.admin ? 'Poista oikeudet' : 'Anna oikeudet'}
+                            {u.admin ? 'Remove admin access' : 'Add admin access'}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={async () => {
-                            if (confirm('Oletko varma että haluat poistaa käyttäjän?')) {
+                            if (confirm('Are you sure you want to delete the user?')) {
                                 await usersApi.remove(u._id)
                                 setUsers(users.filter(user => user._id !== u._id))
                             }
@@ -225,7 +225,7 @@ export default function Users() {
     return (
         <main className='flex flex-col justify-center items-center px-4 pb-2 pt-4 sm:px-8 sm:py-4'>
             <div className='flex flex-col items-start w-full max-w-5xl gap-2'>
-                <h2 className='text-3xl font-bold'>Virittämö portaalin Käyttöoikeuksien Hallinta</h2>
+                <h2 className='text-3xl font-bold'>Portal access management control</h2>
                 <p className='opacity-70'>
                     Tällä sivulla järjestelmänvalvoja voi muokata käyttäjien palvelukohtaisia
                     käyttöoikeuksia. Käyttöoikeuksien muutokset tulevat voimaan kun käyttäjä

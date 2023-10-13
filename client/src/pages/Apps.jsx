@@ -105,7 +105,7 @@ function AppItems() {
   if (!apps || apps.length === 0) {
     return (
       <TableRow>
-        <TableCell>0 Sovellusta</TableCell>
+        <TableCell>0 Applications</TableCell>
       </TableRow>
     );
   }

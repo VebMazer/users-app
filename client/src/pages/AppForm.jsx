@@ -138,7 +138,7 @@ export default function AppForm() {
                         <Input
                             type="text"
                             id="name"
-                            placeholder="kauppakassi-sovellus"
+                            placeholder="shopping-cart-app"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                         />

@@ -1,6 +1,6 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import commonApp from "./common";
+import commonApi from "./common";
 import { config } from "./authorize";
 
 import { apiUrl } from "../config";
@@ -13,14 +13,10 @@ axiosRetry(axios, {
 const app = "/users";
 const url = apiUrl + app;
 
-const create = async (object) => commonApp.post(object, app);
-// const create = async object => {
-//   const response = await axios.post("https://portal-virittamo.azurewebsites.net/api", object, config())
-//   return response.data
-// }
+const create = async (object) => commonApi.post(object, app);
 
-const update = async (id, object) => commonApp.put(id, object, app);
-const remove = async (id) => commonApp.del(id, app);
+const update = async (id, object) => commonApi.put(id, object, app);
+const remove = async (id) => commonApi.del(id, app);
 
 const get = async () => {
   const response = await axios.get(url, config());
