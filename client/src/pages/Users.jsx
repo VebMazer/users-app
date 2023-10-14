@@ -170,7 +170,7 @@ function TableOptions({ u }) {
                                 setUsers(users.filter(user => user._id !== u._id))
                             }
                         }}>
-                            poista
+                            delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -226,14 +226,12 @@ export default function Users() {
             <div className='flex flex-col items-start w-full max-w-5xl gap-2'>
                 <h2 className='text-3xl font-bold'>Portal access management control</h2>
                 <p className='opacity-70'>
-                    Tällä sivulla järjestelmänvalvoja voi muokata käyttäjien palvelukohtaisia
-                    käyttöoikeuksia. Käyttöoikeuksien muutokset tulevat voimaan kun käyttäjä
-                    kirjautuu ulos ja takaisin sisään, tai viimeistään kahden päivän kuluttua
-                    muutoksesta, kun käyttäjän token vanhenee ja hän joutuu kirjautumaan
-                    uudelleen sisään.
+                    In this page a portal admin can edit users application specific access levels.
+                    Changes on user access levels come into effect when a user logs out and logs
+                    back in, or when their token expires.
                 </p>
                 <Table>
-                    <TableCaption>Lista Käyttöoikeuksita käyttäjillä</TableCaption>
+                    <TableCaption>List of application specific access levels.</TableCaption>
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[100px]">Email</TableHead>

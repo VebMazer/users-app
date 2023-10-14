@@ -88,12 +88,12 @@ function UserNav() {
             <DropdownMenuGroup>
               <DropdownMenuItem className="p-0">
                 <Link to="/apps" className="w-full py-1.5 px-2">
-                  Palveluiden hallinta
+                  Application management
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="p-0">
                 <Link to="/users" className="w-full py-1.5 px-2">
-                  Käyttöoikeuksien hallinta
+                  User access management
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -101,7 +101,7 @@ function UserNav() {
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="cursor-pointer">
-          Kirjaudu ulos
+          Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

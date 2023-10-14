@@ -128,7 +128,7 @@ export default function AppForm() {
                 <form onSubmit={onSubmit} className="flex flex-col gap-3 max-w-md">
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-1">
-                            <Label htmlFor="name">Palvelun nimi</Label>
+                            <Label htmlFor="name">App name</Label>
                             <HelpMe>
                                 Give the application to be added a name, for example `shoppingcart-app'
                                 in lowercase letters. Dont use spaces, because it needs to be passable
@@ -154,7 +154,7 @@ export default function AppForm() {
                         <Input
                             type="text"
                             id="url"
-                            placeholder="kuutio.intranet.com"
+                            placeholder="https://portal.test.com/app1"
                             value={url}
                             onChange={(event) => setUrl(event.target.value)}
                         />

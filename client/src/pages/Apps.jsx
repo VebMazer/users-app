@@ -44,7 +44,7 @@ function MoreOptions({ app }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={() => navigate(`/apps/${app._id}`)}>
-          muokkaa
+          edit
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -57,7 +57,7 @@ function MoreOptions({ app }) {
               .catch((error) => console.log("error: ", error));
           }}
         >
-          poista
+          delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
