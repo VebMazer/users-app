@@ -53,15 +53,15 @@ function SetAccessLevel({ user }) {
     const [accessLevel, setAccessLevel] = useState(1)
     const [app, setApp] = useState(apps[0])
 
-    const uploadAccessLevel = async () => {
+    const uploadAccessLevel = async level => {
         try {
-            const access = user.access.find(a => a.app === app._id)
+            const access = user.access.find(a => a.appName === app.name)
 
-            if (access) access.level = accessLevel
+            if (access) access.level = level
             else {
                 user.access.push({
                     appName: app.name,
-                    level: accessLevel
+                    level
                 })
             }
 
@@ -119,10 +119,13 @@ function SetAccessLevel({ user }) {
                 </div>
             </div>
             <DialogFooter>
-                <Button variant='destructive' onClick={() => console.log('remove')}>
+                <Button
+                    variant='destructive'
+                    onClick={() => uploadAccessLevel(0)}
+                >
                     Remove
                 </Button>
-                <Button variant='default' onClick={uploadAccessLevel}>
+                <Button variant='default' onClick={() => uploadAccessLevel(accessLevel)}>
                     Save
                 </Button>
             </DialogFooter>
@@ -246,16 +249,17 @@ export default function Users() {
                                 <TableCell className="font-medium">{u.email}</TableCell>
                                 <TableCell>
                                     <ul className="flex flex-col">
-                                        {u.access.map((a) => {
-                                            const app = apps.find(s => s._id === a.app)
+                                        {u.access.map(a => {
+                                            //const app = apps.find(s => s._id === a.app)
+                                            console.log('app entry:', a)
 
-                                            const access = accessLevels.find((level) => level.accessLevel === a.level)
+                                            const access = accessLevels.find(level => level.accessLevel === a.level)
 
-                                            if (!app) return null
+                                            //if (!app) return null
 
                                             return (
                                                 <li key={a.appName + u._id}>
-                                                    {a.appName}: {access?.role}
+                                                    {a.appName}: {access?.role || a.level}
                                                 </li>
                                             )
                                         })}

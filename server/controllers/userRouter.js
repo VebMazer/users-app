@@ -150,9 +150,10 @@ userRouter.put('/:id', async (req, res, next) => {
     if (!admin && !access && !firstname && !lastname) {
       return res.status(400).json({ error: 'No valid fields to update.'})
     }
-
+    console.log('1:',access)
     // If an access level is marked 0, remove it from the list.
     if (access) access = access.filter(a => a.level != 0)
+    console.log('2:', access)
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
