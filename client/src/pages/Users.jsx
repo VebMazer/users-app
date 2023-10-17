@@ -173,7 +173,7 @@ function TableOptions({ u }) {
                                 setUsers(users.filter(user => user._id !== u._id))
                             }
                         }}>
-                            delete
+                            Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

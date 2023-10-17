@@ -62,12 +62,11 @@ userRouter.post('/', async (req, res, next) => {
       email,
       passwordHash,
       firstname,
-      lastname,
-      access: []
+      lastname
     })
 
     // Add access level 1 by default to all apps.
-    await addAccessLevel(user, 1)
+    // await addAccessLevel(user, 1)
 
     const savedUser = await user.save()
 

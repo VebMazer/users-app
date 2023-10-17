@@ -8,14 +8,9 @@ COPY . .
 
 # Install dependencies for the server and client
 RUN npm run install
-
-# Copy the client and server code into the container
-COPY . .
  
 # Build the React app
 RUN npm run build:prod
-
-COPY . .
 
 # Expose the port the app runs on
 EXPOSE 3459

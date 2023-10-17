@@ -45,24 +45,33 @@ export function ModeToggle() {
   );
 }
 
+
+
 function UserNav() {
   const { user, setUser } = useStore();
+  
   // Run when the logout button is pressed.
   const logout = async () => {
     await authorizeApi.logout();
     const cookies = new Cookies();
     cookies.remove("usersToken");
     setUser(null);
-  };
+  }
+
+  const getNameFromEmail = () => {
+    const left_side = user.email.substring(0, user.email.lastIndexOf("@"))
+    
+    if (left_side.includes('.')) return left_side.split(".").join(" ")
+    
+    return left_side
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="link" className="items-end gap-2">
           <p className="text-xl capitalize">
-            {user.email
-              .substring(0, user.email.lastIndexOf("@"))
-              .split(".")
-              .join(" ")}
+            { getNameFromEmail() }
           </p>
           <ChevronDownIcon className="w-6 h-6" />
         </Button>
