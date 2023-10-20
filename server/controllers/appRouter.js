@@ -64,7 +64,7 @@ appRouter.post('/', async (req, res, next) => {
     } catch (exception) { next(exception) }
 })
 
-// An admin user can delete a app.
+// An admin user can delete an app.
 appRouter.delete('/:id', async (req, res, next) => {
     try {
         const { id } = req.params
@@ -81,7 +81,7 @@ appRouter.delete('/:id', async (req, res, next) => {
 })
 
 
-// An admin user can update a app.
+// An admin user can update an app.
 appRouter.put('/:id', async (req, res, next) => {
     try {
         const { id } = req.params
