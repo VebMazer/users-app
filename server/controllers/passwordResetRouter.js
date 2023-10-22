@@ -43,27 +43,25 @@ pwResetRouter.post('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
     const { password } = req.body
-    
+
     const reset = await Reset.findById(id)
 
     if (!reset) {
       return res.status(404).send(htmlForm('<h2>The link has expired<h2>'))
     }
-    console.log(password)
-    console.log(reset.email)
 
     const user = await User.findOne({ email: reset.email })
     const saltRounds = 12
     const passwordHash = await bcrypt.hash(password, saltRounds)
-
+    
     await User.findByIdAndUpdate(
       user._id,
-      { password: passwordHash },
+      { passwordHash },
       { new: true }
     )
-
+    
     await Reset.findByIdAndDelete(reset._id)
-
+    
     return res.status(200).send(htmlForm('<h2>Your password has been updated<h2>'))
 
   } catch (exception) { next(exception) }
@@ -104,7 +102,7 @@ pwResetRouter.post('/', async (req, res, next) => {
 
     // gmail
     const transporter = nodemailer.createTransport({
-      app: 'gmail',
+      service: 'gmail',
       auth: {
         user: config.email,
         pass: config.emailPW
@@ -125,7 +123,6 @@ pwResetRouter.post('/', async (req, res, next) => {
     // Define the email.
     const mailOptions = {
       from: config.email, // sender address
-      //from: 'bot@mapper.sytes.net', // sender address
       to: user.email, // list of receivers
       subject: 'Password reset request', // Subject line
       html: `<h1> Hello ${user.email}!</h1>
@@ -135,7 +132,7 @@ pwResetRouter.post('/', async (req, res, next) => {
     }
 
     // Send the email.
-    await transporter.sendMail(mailOptions, function (err, info) {
+    transporter.sendMail(mailOptions, function (err, info) {
       if (err) {
         console.log(err)
         
