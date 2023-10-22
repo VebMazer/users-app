@@ -26,17 +26,16 @@ export default function Reset() {
 
   const resetPassword = async (event) => {
     event.preventDefault();
-    console.log("Resetting password for: " + email);
+    
     const message = await resetApi.reset({ email });
-
+    
     if (message.success) {
       alert(
         "Password change link has been sent to your email address. It will expire in 10 minutes.",
       );
-    } else if (message.error) {
-      alert("Reset failed,", message.error);
-    }
-  };
+    
+    } else  alert("Reset failed. " + message.error);
+  }
 
   return (
     <main className="flex flex-col min-h-0 grow justify-center items-center gap-3 px-4 pb-2 pt-4 sm:px-8 sm:py-4">

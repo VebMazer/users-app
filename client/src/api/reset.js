@@ -8,20 +8,18 @@ axiosRetry(axios, {
   retryDelay: axiosRetry.exponentialDelay,
 });
 
-const reset = async (user) => {
+const reset = async user => {
   try {
-    console.log("Trying reset app for: ", user);
-    const response = await axios.post(`${apiUrl}/reset`, user);
+    const response = await axios.post(`${apiUrl}/reset`, user)
 
-    console.log("Reset succeeded : " + response.data);
-
-    return response.data;
+    return response.data
+  
   } catch (exception) {
-    console.log(exception._message);
+    const response = exception.response
 
-    console.log("reset app failed : " + exception);
+    if (response) return response.data
 
-    return { error: "Reset failed" };
+    return { error: 'Unknown error.'}
   }
 };
 

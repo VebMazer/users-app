@@ -135,12 +135,18 @@ pwResetRouter.post('/', async (req, res, next) => {
     }
 
     // Send the email.
-    transporter.sendMail(mailOptions, function (err, info) {
-      if (err) console.log(err)
-      else console.log(info)
+    await transporter.sendMail(mailOptions, function (err, info) {
+      if (err) {
+        console.log(err)
+        
+        return res.status(500).json({ error: 'Email could not be sent.' })
+      
+      } else {
+        console.log(info)
+        
+        return res.status(200).json({ success: 'Reset created and email sent.' })
+      }
     })
-
-    return res.status(200).json({ success: 'Reset created and email sent.' })
   
   } catch (exception) {
     console.log(exception)
