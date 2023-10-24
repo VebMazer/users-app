@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
             validator: v => {
               return /.{2,}@.{2,}\..{2,}/.test(v)
             },
-            invite: props => `${props.value} is not a valid email!`
+            //invite: props => `${props.value} is not a valid email!`
         }
   },
   firstname: String,

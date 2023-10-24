@@ -1,9 +1,14 @@
-const userRouter = require('express').Router()
-const User = require('../models/user')
-const App = require('../models/app')
 const bcrypt = require('bcrypt')
+const nodemailer = require('nodemailer')
+
+const userRouter = require('express').Router()
+
+const User = require('../models/user')
+const UnconfirmedUser = require('../models/unconfirmedUser')
+const App = require('../models/app')
+
 const { requireAuthorization, userIsAdmin } = require('../middleware/authorize')
-const { environment } = require('../config.js')
+const config = require('../config.js')
 
 
 // Validate password, to contain at least one number, one lowercase letter,
@@ -42,14 +47,14 @@ const addAccessLevel = async (user, level) => {
 // Register a new user.
 userRouter.post('/', async (req, res, next) => {
   try {
-    let { email, password, firstname, lastname } = req.body
+    let { email, password } = req.body
 
     if (!email)    return res.status(400).json({ error: 'email is missing' })
     if (!password) return res.status(400).json({ error: 'password is missing' })
 
     email = email.toLowerCase()
 
-    if(environment === 'production' && !validatePassword(password)) {
+    if(config.environment === 'production' && !validatePassword(password)) {
       return res.status(400).json({
         error: 'password must be at least 10 characters long and contain at least one number, one lowercase letter and one uppercase letter.'
       })
@@ -60,9 +65,7 @@ userRouter.post('/', async (req, res, next) => {
 
     const user = new User({
       email,
-      passwordHash,
-      firstname,
-      lastname
+      passwordHash
     })
 
     // Add access level 1 by default to all apps.
@@ -81,6 +84,102 @@ userRouter.post('/', async (req, res, next) => {
     }
     next(exception)
   }
+})
+
+// This path replaces the one above once the functionality email confirmation has been completed.
+userRouter.post('/register', async (req, res, next) => {
+  try {
+    let { email, password } = req.body
+
+    if (!email)    return res.status(400).json({ error: 'email is missing' })
+    if (!password) return res.status(400).json({ error: 'password is missing' })
+
+    email = email.toLowerCase()
+
+    if(config.environment === 'production' && !validatePassword(password)) {
+      return res.status(400).json({
+        error: 'password must be at least 10 characters long and contain at least one number, one lowercase letter and one uppercase letter.'
+      })
+    }
+
+    const saltRounds = 12
+    const passwordHash = await bcrypt.hash(password, saltRounds)
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: config.email,
+        pass: config.emailPW
+      }
+    })
+    
+    const unconfirmedUser = new UnconfirmedUser({
+      email,
+      passwordHash
+    })
+
+    const savedUnconfirmedUser = await unconfirmedUser.save()
+
+    const confirmationLink =
+      `${config.url}/api/users//confirm/${savedUnconfirmedUser._id}`
+
+    const mailContent = {
+      from:     config.email,
+      to:       email, // can also be a list of emails.
+      subject: `Confirm your account`,
+      html: `<h3> Please confirm</h3>
+       <p>Please confirm your email by pressing the link below</p>
+       <a href="${confirmationLink}">${confirmationLink}</a>
+       <p>The link is valid for 10 minutes</p>`
+    }
+
+    transporter.sendMail(mailOptions, function (err, info) {
+      if (err) {
+        console.log(err)
+        
+        res.status(500).json({ error: 'Sending confirmation email failed.' })
+      
+      } else {
+        console.log(info)
+        
+        res.json({ message: `A confirmation email was sent to: ${email}` })
+      }
+    })
+
+    
+
+  } catch (exception) { next(exception) }
+})
+
+// Call this route on the link in the confirmation email.
+userRouter.get('/confirm/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+
+    // Todo: Create the user and delete the UnconfirmedUser.
+    const unconfirmedUser = await UnconfirmedUser.findByIdAndRemove(id)
+
+    
+    if (!unconfirmedUser) {
+      // Note: We might want to block addresses that try to confirm many
+      //       times with an id that is not in the database.
+
+      return res.status(401).json({error: `Cannot find unconfirmed user with id: ${id}`})
+    }
+
+    const { email, passwordHash } = unconfirmedUser
+
+    const user = new User({
+      email,
+      passwordHash
+    })
+
+    const savedUser = await user.save()
+
+    // Redirect the user to the login page.
+    res.redirect(`${config.url}`)
+
+  } catch (exception) { next(exception) }
 })
 
 // From here on require authentication on all routes.

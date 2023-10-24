@@ -4,7 +4,7 @@ const resetSchema = new mongoose.Schema({
   email: String,
   expireAt: {
     type: Date,
-    default: () => Date.now() + 600
+    default: () => Date.now() + 1000 * 60 * 10 // Expire in 10 minutes.
   }
 })
 
