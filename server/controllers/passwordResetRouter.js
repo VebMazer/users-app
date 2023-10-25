@@ -117,18 +117,18 @@ pwResetRouter.post('/', async (req, res, next) => {
     const createdReset = await reset.save()
 
     console.log(createdReset)
-    
+
     const url = `${config.url}/api/reset/${createdReset._id}`
-    
+
     // Define the email.
     const mailOptions = {
-      from: config.email, // sender address
-      to: user.email, // list of receivers
-      subject: 'Password reset request', // Subject line
+      from:    config.email,
+      to:      user.email, // can also be a list of emails.
+      subject: 'Password reset request',
       html: `<h1> Hello ${user.email}!</h1>
        <p>You can change your password using the link below</p>
-       <p>The link is valid for 10 minutes</p>
-       <a href="${url}">${url}</a>`// plain text body
+       <p>The link is valid for 10 minutes.</p>
+       <a href="${url}">${url}</a>`
     }
 
     // Send the email.

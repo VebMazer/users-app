@@ -90,11 +90,24 @@ userRouter.post('/', async (req, res, next) => {
 userRouter.post('/register', async (req, res, next) => {
   try {
     let { email, password } = req.body
-
+    console.log('1 -----------', email, password)
     if (!email)    return res.status(400).json({ error: 'email is missing' })
     if (!password) return res.status(400).json({ error: 'password is missing' })
 
     email = email.toLowerCase()
+
+    let existingUser = await User.findOne({ email })
+    
+    if (existingUser) return res.status(409).json({
+      error: 'Email is already in use.'
+    })
+
+    existingUser = await UnconfirmedUser.findOne({ email })
+
+    if (existingUser) return res.status(409).json({
+      error: 'Email is already in use, but remains unconfirmed.'
+    })
+    
 
     if(config.environment === 'production' && !validatePassword(password)) {
       return res.status(400).json({
@@ -123,17 +136,17 @@ userRouter.post('/register', async (req, res, next) => {
     const confirmationLink =
       `${config.url}/api/users//confirm/${savedUnconfirmedUser._id}`
 
-    const mailContent = {
+    const mailObject = {
       from:     config.email,
       to:       email, // can also be a list of emails.
-      subject: `Confirm your account`,
-      html: `<h3> Please confirm</h3>
-       <p>Please confirm your email by pressing the link below</p>
+      subject: `Account email confirmation`,
+      html: `<h3> Account email confirmation </h3>
+       <p>Please confirm your email to create your account by pressing the link below</p>
        <a href="${confirmationLink}">${confirmationLink}</a>
-       <p>The link is valid for 10 minutes</p>`
+       <p>The link is valid for 10 minutes.</p>`
     }
 
-    transporter.sendMail(mailOptions, function (err, info) {
+    transporter.sendMail(mailObject, function (err, info) {
       if (err) {
         console.log(err)
         
@@ -142,7 +155,7 @@ userRouter.post('/register', async (req, res, next) => {
       } else {
         console.log(info)
         
-        res.json({ message: `A confirmation email was sent to: ${email}` })
+        res.status(201).json({ message: `A confirmation email was sent to: ${email}` })
       }
     })
 
