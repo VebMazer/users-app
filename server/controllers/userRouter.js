@@ -44,49 +44,7 @@ const addAccessLevel = async (user, level) => {
   } catch (exception) { next(exception) }
 }
 
-// Register a new user.
-userRouter.post('/register', async (req, res, next) => {
-  try {
-    let { email, password } = req.body
-
-    if (!email)    return res.status(400).json({ error: 'email is missing' })
-    if (!password) return res.status(400).json({ error: 'password is missing' })
-
-    email = email.toLowerCase()
-
-    if(config.environment === 'production' && !validatePassword(password)) {
-      return res.status(400).json({
-        error: 'password must be at least 10 characters long and contain at least one number, one lowercase letter and one uppercase letter.'
-      })
-    }
-
-    const saltRounds = 12
-    const passwordHash = await bcrypt.hash(password, saltRounds)
-
-    const user = new User({
-      email,
-      passwordHash
-    })
-
-    // Add access level 1 by default to all apps.
-    // await addAccessLevel(user, 1)
-
-    const savedUser = await user.save()
-
-    res.json(User.format(savedUser))
-
-  } catch (exception) {
-    console.log(exception.message)
-    if (exception.message.includes('User validation failed')){
-      res.status(400).json({ error: 'user validation failed' })
-    } else {
-      res.status(500).json({ error: 'something went wrong...' })
-    }
-    next(exception)
-  }
-})
-
-// This path replaces the one above once the functionality email confirmation has been completed.
+// User registration path. Create an Unconfirmed user and send a confirmation email.
 userRouter.post('/', async (req, res, next) => {
   try {
     let { email, password } = req.body
@@ -158,8 +116,6 @@ userRouter.post('/', async (req, res, next) => {
         res.status(201).json({ message: `A confirmation email was sent to: ${email}` })
       }
     })
-
-    
 
   } catch (exception) { next(exception) }
 })
