@@ -10,13 +10,15 @@ axiosRetry(axios, {
   retryDelay: axiosRetry.exponentialDelay,
 });
 
-const app = "/users";
-const url = apiUrl + app;
+const path = "/users";
+const url = apiUrl + path;
 
-const create = async (object) => commonApi.post(object, app);
+const create = async (object) => {
+  return await axios.post(url, object, config())
+}
 
-const update = async (id, object) => commonApi.put(id, object, app);
-const remove = async (id) => commonApi.del(id, app);
+const update = async (id, object) => commonApi.put(id, object, path);
+const remove = async (id) => commonApi.del(id, path);
 
 const get = async () => {
   const response = await axios.get(url, config());

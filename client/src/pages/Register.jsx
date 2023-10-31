@@ -39,7 +39,7 @@ export default function Register() {
   if (user) {
     return (
       <main className="px-4 pb-2 pt-4 sm:px-8 sm:py-4">
-        <p>Olet kirjautunut sisään sähköpostilla: {user.email}</p>
+        <p>You have logged in with email: {user.email}</p>
       </main>
     );
   }
@@ -65,7 +65,7 @@ export default function Register() {
     return true;
   };
 
-  const registerAndLogin = async (event) => {
+  const register = async event => {
     event.preventDefault();
 
     if (!validate()) return;
@@ -73,28 +73,22 @@ export default function Register() {
     const credentials = { password, email };
 
     try {
-      await userApi.create(credentials);
+      const response = await userApi.create(credentials);
 
-      const authenticatedUser = await authenticateApi.authenticate(credentials);
+      if (response.status == 201) {
 
-      if (authenticatedUser) {
-        authorizeApi.setToken(authenticatedUser.token);
-        const cookies = new Cookies();
-
-        cookies.set("usersToken", authenticatedUser.token, {
-          // Cookie expires in 60 days.
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60),
-          path: "/",
-        });
-
-        setUser(authenticatedUser);
+        alert(
+          `Account created! Please confirm your account by pressing a link sent to: ${email}`
+        );
 
         navigate("/");
-      } else alert("Failed to login");
+      
+      } else alert("Registration failed on the server.");
+    
     } catch (exception) {
       alert("Registration failed on the server.");
     }
-  };
+  }
 
   return (
     <main className="flex flex-col min-h-0 flex-1 gap-3 px-4 pb-2 pt-4 sm:px-8 sm:py-4">
@@ -105,7 +99,7 @@ export default function Register() {
           <p className="text-xs opacity-70">
             Your email will be verified to complete your registration.
           </p>
-          <form onSubmit={registerAndLogin} className="flex flex-col gap-3">
+          <form onSubmit={register} className="flex flex-col gap-3">
             <div className="">
               <Label htmlFor="email">Email</Label>
               <Input

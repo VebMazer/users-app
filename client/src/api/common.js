@@ -9,8 +9,8 @@ axiosRetry(axios, {
   retryDelay: axiosRetry.exponentialDelay,
 });
 
-const getAll = async (app) => {
-  const completeUrl = url + app;
+const getAll = async (path) => {
+  const completeUrl = url + path;
 
   const response = await axios.get(completeUrl, config());
 
@@ -18,26 +18,26 @@ const getAll = async (app) => {
   return response.data;
 };
 
-const get = async (id, app) => {
-  const response = await axios.get(url + app + `/${id}`, config());
+const get = async (id, path) => {
+  const response = await axios.get(url + path + `/${id}`, config());
 
   return response.data;
 };
 
-const post = async (object, app) => {
-  const response = await axios.post(url + app, object, config());
+const post = async (object, path) => {
+  const response = await axios.post(url + path, object, config());
 
   return response.data;
 };
 
-const put = async (id, object, app) => {
-  const response = await axios.put(url + app + `/${id}`, object, config());
+const put = async (id, object, path) => {
+  const response = await axios.put(url + path + `/${id}`, object, config());
 
   return response.data;
 };
 
-const del = async (id, app) => {
-  const response = await axios.delete(url + app + `/${id}`, config());
+const del = async (id, path) => {
+  const response = await axios.delete(url + path + `/${id}`, config());
 
   return response.data;
 };

@@ -10,8 +10,8 @@ axiosRetry(axios, {
   retryDelay: axiosRetry.exponentialDelay,
 });
 
-const app = "/apps";
-const url = apiUrl + app;
+const path = "/apps";
+const url = apiUrl + path;
 
 // Get all public information about the apps.
 const getAllPublic = async () => {
@@ -20,9 +20,9 @@ const getAllPublic = async () => {
   return response.data;
 };
 
-const getAll = async () =>           commonApi.getAll(app);
-const create = async object =>       commonApi.post(object, app);
-const update = async (id, object) => commonApi.put(id, object, app);
-const remove = async id =>           commonApi.del(id, app);
+const getAll = async () =>           commonApi.getAll(path);
+const create = async object =>       commonApi.post(object, path);
+const update = async (id, object) => commonApi.put(id, object, path);
+const remove = async id =>           commonApi.del(id, path);
 
 export default { getAllPublic, getAll, create, update, remove };

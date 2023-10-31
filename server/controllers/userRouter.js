@@ -45,7 +45,7 @@ const addAccessLevel = async (user, level) => {
 }
 
 // Register a new user.
-userRouter.post('/', async (req, res, next) => {
+userRouter.post('/register', async (req, res, next) => {
   try {
     let { email, password } = req.body
 
@@ -87,10 +87,10 @@ userRouter.post('/', async (req, res, next) => {
 })
 
 // This path replaces the one above once the functionality email confirmation has been completed.
-userRouter.post('/register', async (req, res, next) => {
+userRouter.post('/', async (req, res, next) => {
   try {
     let { email, password } = req.body
-    console.log('1 -----------', email, password)
+    
     if (!email)    return res.status(400).json({ error: 'email is missing' })
     if (!password) return res.status(400).json({ error: 'password is missing' })
 
@@ -134,7 +134,7 @@ userRouter.post('/register', async (req, res, next) => {
     const savedUnconfirmedUser = await unconfirmedUser.save()
 
     const confirmationLink =
-      `${config.url}/api/users//confirm/${savedUnconfirmedUser._id}`
+      `${config.url}/api/users/confirm/${savedUnconfirmedUser._id}`
 
     const mailObject = {
       from:     config.email,
