@@ -12,6 +12,8 @@ import Reset from "./pages/Reset";
 import Apps from "./pages/Apps";
 import AppForm from "./pages/AppForm";
 import Users from "./pages/Users";
+import Confirmed from "./components/ui/Confirmed";
+
 import { Navbar } from "./components/header";
 
 export default function App() {
@@ -44,6 +46,7 @@ export default function App() {
 
           <Route path="/register" element={<Register />} />
           <Route path="/register/:app_name" element={<Register />} />
+          <Route path="/confirmed" element={<Confirmed />} />
 
           <Route path="/resetpassword" element={<Reset />} />
 

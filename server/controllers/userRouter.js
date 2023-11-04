@@ -146,15 +146,13 @@ userRouter.get('/confirm/:id', async (req, res, next) => {
     const savedUser = await user.save()
 
     // Redirect the user to the login page.
-    res.redirect(`${config.url}`)
+    res.redirect(`${config.url}/confirmed`)
 
   } catch (exception) { next(exception) }
 })
 
 // From here on require authentication on all routes.
 userRouter.all('*', requireAuthorization)
-
-// Update routes will be created here.
 
 // A Client with a valid token can get their user data.
 userRouter.get('/', async (req, res, next) => {
