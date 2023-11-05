@@ -3,9 +3,10 @@ const mongoose = require('mongoose')
 const unconfirmedUserSchema = new mongoose.Schema({
   email: String,
   passwordHash: String,
-  expireAt: {
+  createdAt: {
     type: Date,
-    default: () => Date.now() + 1000 * 60 * 10 // Expire in 10 minutes.
+    default: Date.now,
+    expires: '20m'
   }
 })
 
