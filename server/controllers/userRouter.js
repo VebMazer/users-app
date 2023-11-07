@@ -65,7 +65,6 @@ userRouter.post('/', async (req, res, next) => {
     if (existingUser) return res.status(409).json({
       error: 'Email is already in use, but remains unconfirmed.'
     })
-    
 
     if(config.environment === 'production' && !validatePassword(password)) {
       return res.status(400).json({

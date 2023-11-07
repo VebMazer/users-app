@@ -161,7 +161,7 @@ function TableOptions({ u }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[160px]">
                         <DialogTrigger asChild>
-                            <DropdownMenuItem>Define</DropdownMenuItem>
+                            <DropdownMenuItem>Set app access</DropdownMenuItem>
                         </DialogTrigger>
                         <DropdownMenuItem onClick={() => toggleAdmin(u)} >
                             {u.admin ? 'Remove admin access' : 'Add admin access'}

@@ -1,7 +1,18 @@
 const mongoose = require('mongoose')
 
 const unconfirmedUserSchema = new mongoose.Schema({
-  email: String,
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    minlength: 3,
+    validate: {
+      validator: v => {
+      return /.{1,}@.{1,}\..{1,}/.test(v)
+      },
+      message: props => `${props.value} is not a valid email!`
+    }
+  },
   passwordHash: String,
   createdAt: {
     type: Date,
