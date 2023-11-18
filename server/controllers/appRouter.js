@@ -44,7 +44,7 @@ appRouter.post('/', async (req, res, next) => {
     try {
         let { name, url, appKey } = req.body
 
-        if (!name)      return res.status(400).json({ error: 'name is missing' })
+        if (!name)   return res.status(400).json({ error: 'name is missing' })
         if (!url)    return res.status(400).json({ error: 'url is missing' })
         if (!appKey) return res.status(400).json({ error: 'appKey is missing' })
 
@@ -94,7 +94,6 @@ appRouter.put('/:id', async (req, res, next) => {
         if (name) name = name.toLowerCase()
         if (url)  url  = url.toLowerCase()
 
-        // update the app.
         const updatedApp = await App.findByIdAndUpdate(id, {
             name,
             url,

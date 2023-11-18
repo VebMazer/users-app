@@ -175,7 +175,6 @@ userRouter.get('/', async (req, res, next) => {
 userRouter.all('*', userIsAdmin)
 
 
-// Get all users.
 userRouter.get('/all', async (req, res, next) => {
   try {
     const users = await User.find({})
@@ -186,7 +185,7 @@ userRouter.get('/all', async (req, res, next) => {
 })
 
 
-// Delete a user.
+// An admin user can delete any user.
 userRouter.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
