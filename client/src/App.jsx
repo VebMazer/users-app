@@ -40,12 +40,9 @@ export default function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/:app_name" element={<Login />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/login/:app_name" element={<Login />} />
 
           <Route path="/register" element={<Register />} />
-          <Route path="/register/:app_name" element={<Register />} />
           <Route path="/confirmed" element={<Confirmed />} />
 
           <Route path="/resetpassword" element={<Reset />} />

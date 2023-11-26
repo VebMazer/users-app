@@ -21,7 +21,7 @@ export default function Login() {
 
   const [searchParams] = useSearchParams();
 
-  // url/?app_name=example.com
+  // url/?app_name=example-app-name
   const app_name = searchParams.get("app_name");
 
   useEffect(() => {
