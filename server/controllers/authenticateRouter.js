@@ -2,13 +2,13 @@
 // (Requests that require email/username and password.)
 
 // Npm imports.
-const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const axios = require('axios')
 const authenticateRouter = require('express').Router()
 
 // Local imports.
 const User = require('../models/user')
+const Session = require('../models/session')
 const App = require('../models/app')
 
 // Authenticate user without forwarding them to any app.
@@ -35,15 +35,25 @@ authenticateRouter.post('/', async (req, res, next) => {
     return res.status(401).json({ error: 'invalid email or password' })
   }
 
-  // Sign a token.
-  const token = user.generateJWT()
+  // Start a session.
+  const session = new Session({
+      user: {
+          _id: user._id,
+          email: user.email
+      },
+      admin: user.admin,
+      access: user.access
+  })
 
-  // Return the user and the token.
-  res.status(200).send({ token, ...User.format(user) })
+  const savedSession = await session.save()
+  const session_key = savedSession.key
+
+  // Return the user and the session_key.
+  res.status(200).send({ session_key, ...User.format(user) })
 })
 
 // Authenticate user and authorize them to use a specific app.
-// Returns a key that a client can use to get a token from
+// Returns a key that a client can use to get a session_key from
 // the app defined with the name parameter.
 authenticateRouter.post('/:name', async (req, res, next) => {
   try {
@@ -73,8 +83,18 @@ authenticateRouter.post('/:name', async (req, res, next) => {
       return res.status(401).json({ error: 'invalid email or password' })
     }
 
-    // Sign a token.
-    const token = user.generateJWT()
+    // Start a session.
+  const session = new Session({
+    user: {
+        _id: user._id,
+        email: user.email
+    },
+    admin: user.admin,
+    access: user.access
+  })
+
+  const savedSession = await session.save()
+  const session_key = savedSession.key
 
     // Confirm to the app that the user has been authenticated.
     const response = await axios.post(
@@ -82,16 +102,16 @@ authenticateRouter.post('/:name', async (req, res, next) => {
 
       // Send the authentication password, so that
       // the app knows its the user app that is sending the request.
-      { email, token, app_key: app.appKey }
+      { email, session_key , app_key: app.appKey }
     )
 
     // Get a one time use user_key that allows the redirected user to get,
-    // their token from the app.
+    // their session_key from the app.
     const { user_key } = response.data
 
-    // token is used by the users app and the user_key is used by the
+    // session_key is used by the users app and the user_key is used by the
     // app the user will be redirected to.
-    res.status(200).send({ token, user_key, ...User.format(user) })
+    res.status(200).send({ session_key, user_key, ...User.format(user) })
 
     // After receiving this response on the frontend, redirect the
     // user to the app's url, with the Authorization header

@@ -3,7 +3,7 @@ const User = require('../models/user')
 const Reset = require('../models/reset')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
-const config = require('../config')
+const config = require('../utils/config')
 
 // Add a html body to the email.
 const htmlForm = text => {

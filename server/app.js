@@ -11,7 +11,7 @@ const { requestLogger, unknownEndpoint, errorHandler
       } = require('./middleware/middleware')
 
 // Sets up database connection management logic and starts the connection.
-const connectMongoose = require('./connectMongoose')
+const connectMongoose = require('./utils/connectMongoose')
 
 // Router imports
 const userRouter          = require('./controllers/userRouter')

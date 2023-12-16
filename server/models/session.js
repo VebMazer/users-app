@@ -1,17 +1,26 @@
 const mongoose = require('mongoose')
 const crypto = require('crypto')
 
+let sessionKeyLength = 100
+
+const generateKey = () => {
+    return crypto.randomBytes(sessionKeyLength).toString('hex')
+}
+
 const sessionSchema = new mongoose.Schema({
     key: {
         type: String,
         required: true,
+        default: generateKey(),
         unique: true
     },
     expires: {
         type: Date,
-        required: true
+        required: true,
+        default: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // Expires in 7 days.
     },
     user: {
+        // This data gets sent along with authorizaiton requests.
         _id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
@@ -19,9 +28,8 @@ const sessionSchema = new mongoose.Schema({
         email: String,
         firstname: String,
         lastname: String,
-        admin: Boolean,
-
     },
+    admin: Boolean,
     access: [{
         appName: {
           // Apps name so that access can be checked with just the session_key.
@@ -36,6 +44,13 @@ const sessionSchema = new mongoose.Schema({
 })
 
 
+// Needs to use oldschool function syntax if "this", is used.
+sessionSchema.methods.updateKey = function updateKey() {
+    this.key = generateKey()
+}
+
+sessionSchema.statics.generateKey = generateKey
+
 sessionSchema.statics.format = session => {
     const { expires, access, user } = session
     return {
@@ -45,8 +60,7 @@ sessionSchema.statics.format = session => {
     }
 }
 
-let sessionKeyLength = 100
 
-sessionSchema.statics.generateKey = () => {
-    return crypto.randomBytes(sessionKeyLength).toString('hex')
-}
+const Session = mongoose.model('Session', sessionSchema)
+
+module.exports = Session

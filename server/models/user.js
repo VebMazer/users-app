@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 
-const { jwtSecret } = require('../config')
+const { jwtSecret } = require('../utils/config')
 
 const { ObjectId } = mongoose.Schema.Types
 

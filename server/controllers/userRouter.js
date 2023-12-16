@@ -8,7 +8,7 @@ const UnconfirmedUser = require('../models/unconfirmedUser')
 const App = require('../models/app')
 
 const { requireAuthorization, userIsAdmin } = require('../middleware/authorize')
-const config = require('../config.js')
+const config = require('../utils/config.js')
 
 
 // Validate password, to contain at least one number, one lowercase letter,
