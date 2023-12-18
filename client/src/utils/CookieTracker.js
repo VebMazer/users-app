@@ -10,18 +10,18 @@ export function CookieTracker() {
 
   const loadCookies = async () => {
     const cookies = new Cookies();
-    const usersToken = cookies.get("usersToken");
+    const usersAuth = cookies.get("usersAuth");
 
-    if (usersToken) {
-      // Initialize the user state with the token from the cookie.
-      authorizeApi.setToken(usersToken);
+    if (usersAuth) {
+      // Initialize the user state with the session_key from the cookie.
+      authorizeApi.setSessionKey(usersAuth);
 
       try {
         // Load user information from the server.
         setUser(await userApi.get());
       } catch (error) {
-        // If the token is invalid, remove the token cookie.
-        cookies.remove("usersToken");
+        // If the session_key is invalid, remove the session_key cookie.
+        cookies.remove("usersAuth");
       }
     }
   };

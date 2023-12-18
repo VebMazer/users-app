@@ -31,18 +31,18 @@ describe('/authorize router tests', () => {
         console.log(response.data)
     })
     
-    test('logout to blacklist a token', async () => {
+    test('logout works', async () => {
         const response = await api.post('/api/authenticate')
                                    .send(manyUsers[1])
                                    .expect(200)
         console.log('response.data:', response.data)
-        const { token } = response.data
+        const { session_key } = response.data
         await api.post('/api/authorize/logout')
-                 .set('Authorization', `bearer ${token}`)
+                 .set('Authorization', session_key)
                  .expect(200)
         
         await api.get('/api/authorize')
-                 .set('Authorization', `bearer ${token}`)
+                 .set('Authorization', session_key)
                  .expect(401)
     })
 })

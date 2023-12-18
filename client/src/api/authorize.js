@@ -10,27 +10,26 @@ axiosRetry(axios, {
 
 const url = `${apiUrl}/authorize`;
 
-let token = null;
+let session_key = null;
 
-// Makes sure that the token is sent if it has been defined.
+const setSessionKey = newSessionKey => {
+  session_key = newSessionKey;
+};
+
+// Makes sure that the session_key is sent if it has been defined.
 // Also sends the object as data if it has been defined as a
 // parameter.
 export const config = (object) => {
-  if (!token && !object) return {};
+  if (!session_key && !object) return {};
 
-  if (token && !object) return { headers: { Authorization: token } };
+  if (session_key && !object) return { headers: { Authorization: session_key } };
 
-  if (!token && object) return { data: object };
+  if (!session_key && object) return { data: object };
 
   return {
-    headers: { Authorization: token },
+    headers: { Authorization: session_key },
     data: object,
   };
-};
-
-const setToken = (newToken) => {
-  if (newToken) token = `bearer ${newToken}`;
-  else token = null;
 };
 
 // Authorize the user to use the app. Use this
@@ -46,9 +45,9 @@ const authorizeForApp = async app_name => {
 const logout = async () => {
   const response = await axios.get(`${url}/logout`, config());
 
-  setToken(null);
+  session_key = null;
 
   return response.data;
 };
 
-export default { setToken, authorizeForApp, logout };
+export default { setSessionKey, authorizeForApp, logout };

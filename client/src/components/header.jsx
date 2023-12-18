@@ -54,7 +54,7 @@ function UserNav() {
   const logout = async () => {
     await authorizeApi.logout();
     const cookies = new Cookies();
-    cookies.remove("usersToken");
+    cookies.remove("usersAuth");
     setUser(null);
   }
 

@@ -1,12 +1,8 @@
 const Session = require('../models/session')
 
-// Middleware that checks if the request has a valid token, in the authroziation header.
+// Middleware that checks if the request has a valid session_key, in the authorization header.
 const requireAuthorization = async (req, res, next) => {
   try {
-      // Check if it is time to prune the tokenBlacklist.
-      //pruneTokenBlacklist()
-      // replace with sessionStorage and database pruning.
-
       const session_key = req.get('authorization')
 
       if (!session_key) {

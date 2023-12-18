@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const jwt = require('jsonwebtoken')
 
 const { jwtSecret } = require('../utils/config')
 
@@ -30,7 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   access: [{
     appName: {
-      // Apps name so that access can be checked with just the token.
+      // With this access can be checked with just the session_key.
       type: String,
       required: true
     },
@@ -40,19 +39,6 @@ const userSchema = new mongoose.Schema({
     }
   }]
 })
-
-// Needs to use oldschool function syntax to access "this".
-userSchema.methods.generateJWT = function generateJWT() {
-  return jwt.sign({
-    _id: this._id,
-    email: this.email,
-    firstname: this.firstname,
-    lastname: this.lastname,
-    admin: this.admin,
-    access: this.access
-  }, jwtSecret,
-  { expiresIn: '2d' })
-}
 
 userSchema.statics.format = user => {
   const { _id, email, firstname, lastname, admin, access } = user

@@ -153,7 +153,7 @@ userRouter.get('/confirm/:id', async (req, res, next) => {
 // From here on require authentication on all routes.
 userRouter.all('*', requireAuthorization)
 
-// A Client with a valid token can get their user data.
+// A Client with a valid session_key can get their user data.
 userRouter.get('/', async (req, res, next) => {
   try {
     let { _id } = res.locals.user

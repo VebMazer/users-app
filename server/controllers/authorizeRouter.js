@@ -1,8 +1,8 @@
 // 1. This router functions as an authorization endpoint. Where other apps
 // can check whether or not users have authorization to use the app.
 // and if their access level is high enough.
-// 2. Also has paths that authorize a user to get a valid token for another
-// app.
+// 2. Also has paths that authorize a user to get a valid session_key for
+// another app.
 
 // Node imports
 const axios = require('axios')
@@ -17,7 +17,7 @@ const App = require('../models/app')
 const { requireAuthorization } = require('../middleware/authorize')
 
 
-// From here on require valid authorization(token) on all routes.
+// From here on require valid authorization(session_key) on all routes.
 authorizeRouter.all('*', requireAuthorization)
 
 
