@@ -1,19 +1,5 @@
 const Session = require('../models/session')
 
-const processTokenErrors = (error, req, res, next) => {
-  if (error.name === 'TokenExpiredError') {
-    console.log('User token has expired!')
-    
-    return res.status(401).json({ error: 'token expired' })
-  
-  } else if (error.name === 'JsonWebTokenError') {
-    console.log('error.message:', error.message)
-    
-    return res.status(401).json({ error: error.message })
-  
-  } else return next(error)
-}
-
 // Middleware that checks if the request has a valid token, in the authroziation header.
 const requireAuthorization = async (req, res, next) => {
   try {
@@ -48,7 +34,7 @@ const requireAuthorization = async (req, res, next) => {
 
       next()
 
-  } catch (error) { processTokenErrors(error, req, res, next) }
+  } catch (error) { next(error) }
 }
 
 // Middleware that ensures that the user making the request
