@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-const { jwtSecret } = require('../utils/config')
-
 const { ObjectId } = mongoose.Schema.Types
 
 const userSchema = new mongoose.Schema({

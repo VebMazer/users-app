@@ -9,7 +9,8 @@ const requireAuthorization = async (req, res, next) => {
           return res.status(401).json({ error: 'authorization header missing.' })
       }
 
-      const session = await Session.findOne({ key: session_key })
+      const session_key_hash = Session.encryptKey(session_key)
+      const session = await Session.findOne({ keyHash: session_key_hash })
 
       if (!session) {
         return res.status(401).json({ error: 'invalid session_key.' })

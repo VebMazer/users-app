@@ -126,7 +126,8 @@ authorizeRouter.get('/logout', async (req, res, next) => {
   try {
     const session_key = req.get('authorization')
     
-    const session = await Session.findOneAndRemove({ key: session_key })
+    const session_key_hash = Session.encryptKey(session_key)
+    const session = await Session.findOneAndRemove({ keyHash: session_key_hash })
 
     if (!session) {
       return res.status(401).json({ error: 'Invalid session_key.' })

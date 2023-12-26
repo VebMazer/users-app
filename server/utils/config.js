@@ -23,7 +23,9 @@ if (environment === 'test'){
   url = process.env.URL_PROD
 }
 
-const jwtSecret = process.env.JWT_SECRET
+const cipherKey = process.env.CIPHER_KEY
+const initVector = process.env.INIT_VECTOR
+
 
 module.exports = {
   mongoUrl,
@@ -32,5 +34,6 @@ module.exports = {
   emailPW,
   url,
   environment,
-  jwtSecret
+  cipherKey,
+  initVector
 }

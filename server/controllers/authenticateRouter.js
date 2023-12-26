@@ -13,43 +13,48 @@ const App = require('../models/app')
 
 // Authenticate user without forwarding them to any app.
 authenticateRouter.post('/', async (req, res, next) => {
-  let { email, password } = req.body
+  try {
+    let { email, password } = req.body
 
-  if (!email)    return res.status(400).json({ error: 'email is missing' })
-  if (!password) return res.status(400).json({ error: 'password is missing' })
+    if (!email)    return res.status(400).json({ error: 'email is missing' })
+    if (!password) return res.status(400).json({ error: 'password is missing' })
 
-  email = email.toLowerCase()
+    email = email.toLowerCase()
 
-  const user = await User.findOne({ email })
+    const user = await User.findOne({ email })
 
-  if (!user) {
-    // If there does not exist a user with the given email.
-    return res.status(401).json({ error: 'invalid email or password' })
-  }
+    if (!user) {
+      // If there does not exist a user with the given email.
+      return res.status(401).json({ error: 'invalid email or password' })
+    }
 
-  // Compare the body password to the saved password hash of the user.
-  const passwordCorrect = await bcrypt.compare(password, user.passwordHash)
+    // Compare the body password to the saved password hash of the user.
+    const passwordCorrect = await bcrypt.compare(password, user.passwordHash)
 
-  if (!passwordCorrect) {
-    // If the password is incorrect.
-    return res.status(401).json({ error: 'invalid email or password' })
-  }
+    if (!passwordCorrect) {
+      // If the password is incorrect.
+      return res.status(401).json({ error: 'invalid email or password' })
+    }
 
-  // Start a session.
-  const session = new Session({
+    // Start a session.
+    const session = new Session({
       user: {
           _id: user._id,
           email: user.email
       },
       admin: user.admin,
       access: user.access
-  })
+    })
 
-  const savedSession = await session.save()
-  const session_key = savedSession.key
+    const session_key = await session.createKey()
 
-  // Return the user and the session_key.
-  res.status(200).send({ session_key, ...User.format(user) })
+    const savedSession = await session.save()
+    //const session_key = savedSession.key
+
+    // Return the user and the session_key.
+    res.status(200).send({ session_key, ...User.format(user) })
+
+    } catch (exception) {next(exception)}
 })
 
 // Authenticate user and authorize them to use a specific app.
@@ -84,17 +89,19 @@ authenticateRouter.post('/:name', async (req, res, next) => {
     }
 
     // Start a session.
-  const session = new Session({
-    user: {
-        _id: user._id,
-        email: user.email
-    },
-    admin: user.admin,
-    access: user.access
-  })
+    const session = new Session({
+      user: {
+          _id: user._id,
+          email: user.email
+      },
+      admin: user.admin,
+      access: user.access
+    })
 
-  const savedSession = await session.save()
-  const session_key = savedSession.key
+    const session_key = await session.createKey()
+  
+    const savedSession = await session.save()
+    // const session_key = savedSession.key
 
     // Confirm to the app that the user has been authenticated.
     const response = await axios.post(

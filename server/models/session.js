@@ -1,17 +1,11 @@
 const mongoose = require('mongoose')
 const crypto = require('crypto')
-
-let sessionKeyLength = 100
-
-const generateKey = () => {
-    return crypto.randomBytes(sessionKeyLength).toString('hex')
-}
+const { cipherKey, initVector } = require('../utils/config')
 
 const sessionSchema = new mongoose.Schema({
-    key: {
+    keyHash: {
         type: String,
         required: true,
-        default: generateKey(),
         unique: true
     },
     expires: {
@@ -43,13 +37,37 @@ const sessionSchema = new mongoose.Schema({
     }]
 })
 
+let sessionKeyLength = 64
 
-// Needs to use oldschool function syntax if "this", is used.
-sessionSchema.methods.updateKey = function updateKey() {
-    this.key = generateKey()
+const generateKey = () =>
+    crypto.randomBytes(sessionKeyLength).toString('hex')
+
+const algorithm = 'aes256'
+
+const encrypt = text => {
+    const cipher = crypto.createCipheriv(algorithm, cipherKey, initVector)
+    return cipher.update(text, 'utf8', 'hex') + cipher.final('hex')
+}
+const decrypt = text => {
+    const decipher = crypto.createDecipheriv(algorithm, cipherKey, initVector)
+    return decipher.update(text, 'hex', 'utf8') + decipher.final('utf8')
+}
+
+// Needs to use oldschool function syntax when "this", is used.
+sessionSchema.methods.createKey = async function() {
+    const key = generateKey()
+    this.keyHash = encrypt(key)
+    return key
+}
+
+// Needs to use oldschool function syntax when "this", is used.
+sessionSchema.methods.decryptKey = async function() {
+    return decrypt(this.keyHash)
 }
 
 sessionSchema.statics.generateKey = generateKey
+sessionSchema.statics.encryptKey = key => encrypt(key)
+sessionSchema.statics.decryptKey = key => decrypt(key)
 
 sessionSchema.statics.format = session => {
     const { expires, access, user } = session
