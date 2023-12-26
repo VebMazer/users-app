@@ -248,12 +248,8 @@ export default function Users() {
                                 <TableCell>
                                     <ul className="flex flex-col">
                                         {u.access.map(a => {
-                                            //const app = apps.find(s => s._id === a.app)
-                                            console.log('app entry:', a)
 
                                             const access = accessLevels.find(level => level.accessLevel === a.level)
-
-                                            //if (!app) return null
 
                                             return (
                                                 <li key={a.appName + u._id}>
