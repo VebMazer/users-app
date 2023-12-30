@@ -47,17 +47,17 @@ authenticateRouter.post('/', async (req, res, next) => {
     })
 
     const savedSession = await session.save()
-    const session_key = `${savedSession._id} ${savedSession.key}`
+    const authorization = `${savedSession._id} ${savedSession.key}`
 
-    // Return the user and the session_key.
-    res.status(200).send({ session_key, ...User.format(user) })
+    // Return the user and the authorization.
+    res.status(200).send({ authorization, ...User.format(user) })
 
     } catch (exception) {next(exception)}
 })
 
 // Authenticate user and authorize them to use a specific app.
-// Returns a key that a client can use to get a session_key from
-// the app defined with the name parameter.
+// Returns a key that a client can use to get a session authorization
+// from the app defined with the name parameter.
 authenticateRouter.post('/:name', async (req, res, next) => {
   try {
     let { email, password } = req.body
@@ -96,30 +96,28 @@ authenticateRouter.post('/:name', async (req, res, next) => {
       access: user.access
     })
 
-    const session_key = await session.createKey()
-  
     const savedSession = await session.save()
-    // const session_key = savedSession.key
+    const authorization = `${savedSession._id} ${savedSession.key}`
 
     // Confirm to the app that the user has been authenticated.
     const response = await axios.post(
       `${app.url}/api/authorize`,
 
-      // Send the authentication password, so that
-      // the app knows its the user app that is sending the request.
-      { email, session_key , app_key: app.appKey }
+      // Send the appKey, so that the app knows its the user app that
+      // is sending the request.
+      { email, authorization, app_key: app.appKey }
     )
 
     // Get a one time use user_key that allows the redirected user to get,
-    // their session_key from the app.
+    // their authorization header value from the app.
     const { user_key } = response.data
 
-    // session_key is used by the users app and the user_key is used by the
+    // authorization is used by the users app and the user_key is used by the
     // app the user will be redirected to.
-    res.status(200).send({ session_key, user_key, ...User.format(user) })
+    res.status(200).send({ authorization, user_key, ...User.format(user) })
 
     // After receiving this response on the frontend, redirect the
-    // user to the app's url, with the Authorization header
+    // user to the app's url, with the user_key as a query parameter.
 
   } catch (exception) {next(exception)}
 })

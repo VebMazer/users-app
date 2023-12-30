@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   },
   access: [{
     appName: {
-      // With this access can be checked with just the session_key.
+      // With this access can be checked easily.
       type: String,
       required: true
     },

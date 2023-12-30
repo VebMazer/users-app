@@ -1,7 +1,7 @@
 // 1. This router functions as an authorization endpoint. Where other apps
 // can check whether or not users have authorization to use the app.
 // and if their access level is high enough.
-// 2. Also has paths that authorize a user to get a valid session_key for
+// 2. Also has paths that authorize a user to get a valid authorization for
 // another app.
 
 // Node imports
@@ -17,21 +17,21 @@ const App = require('../models/app')
 const { requireAuthorization } = require('../middleware/authorize')
 
 
-// From here on require valid authorization(session_key) on all routes.
+// From here on require valid authorization on all routes.
 authorizeRouter.all('*', requireAuthorization)
 
 
 // Route that authorizes the user to use a specific app,
 // that does authorization by itself. Called when the user is
 // redirected to the login page from another app and
-// already has a valid session_key on the users app.
-// Returns a key that a client can use to get a session_key from
+// already has a valid authorization on the users app.
+// Returns a key that a client can use to get a authorization from
 // the app defined in the name parameter.
 authorizeRouter.get('/app/:name', async (req, res, next) => {
   try {
     const { user } = res.locals
     const name = req.params.name.toLowerCase()
-    const session_key = req.get('authorization')
+    const authorization = req.get('authorization')
 
     const app = await App.findOne({ name })
     
@@ -47,16 +47,16 @@ authorizeRouter.get('/app/:name', async (req, res, next) => {
       // the app knows its the user app that is sending the request.
       {
         email: user.email,
-        session_key,
+        authorization,
         app_key: app.appKey
       }
     )
 
     // Get a one time use user_key that allows the redirected user to get,
-    // their session_key from the app.
+    // their authorization from the app.
     const { user_key } = response.data
 
-    // session_key is used by the user app and the user_key is used by the
+    // authorization is used by the user app and the user_key is used by the
     // app that the user will be redirected to.
     res.status(200).send({ user_key, ...User.format(user) })
 

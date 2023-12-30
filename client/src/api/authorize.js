@@ -10,24 +10,24 @@ axiosRetry(axios, {
 
 const url = `${apiUrl}/authorize`;
 
-let session_key = null;
+let authorization = null;
 
-const setSessionKey = newSessionKey => {
-  session_key = newSessionKey;
+const setAuthorization = newAuthorization => {
+  authorization = newAuthorization;
 };
 
-// Makes sure that the session_key is sent if it has been defined.
+// Makes sure that the authorization is sent if it has been defined.
 // Also sends the object as data if it has been defined as a
 // parameter.
 export const config = (object) => {
-  if (!session_key && !object) return {};
+  if (!authorization && !object) return {};
 
-  if (session_key && !object) return { headers: { Authorization: session_key } };
+  if (authorization && !object) return { headers: { Authorization: authorization } };
 
-  if (!session_key && object) return { data: object };
+  if (!authorization && object) return { data: object };
 
   return {
-    headers: { Authorization: session_key },
+    headers: { Authorization: authorization },
     data: object,
   };
 };
@@ -45,9 +45,9 @@ const authorizeForApp = async app_name => {
 const logout = async () => {
   const response = await axios.get(`${url}/logout`, config());
 
-  session_key = null;
+  authorization = null;
 
   return response.data;
 };
 
-export default { setSessionKey, authorizeForApp, logout };
+export default { setAuthorization, authorizeForApp, logout };

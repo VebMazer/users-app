@@ -20,7 +20,7 @@ const sessionSchema = new mongoose.Schema({
         default: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // Expires in 7 days.
     },
     user: {
-        // This data gets sent along with authorizaiton requests.
+        // This data gets sent along with authorization requests.
         _id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
@@ -32,7 +32,7 @@ const sessionSchema = new mongoose.Schema({
     admin: Boolean,
     access: [{
         appName: {
-          // Apps name so that access can be checked with just the session_key.
+          // Apps name so that access can be checked easily.
           type: String,
           required: true
         },

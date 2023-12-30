@@ -36,13 +36,13 @@ describe('/authorize router tests', () => {
                                    .send(manyUsers[1])
                                    .expect(200)
         console.log('response.data:', response.data)
-        const { session_key } = response.data
+        const { authorization } = response.data
         await api.post('/api/authorize/logout')
-                 .set('Authorization', session_key)
+                 .set('Authorization', authorization)
                  .expect(200)
         
         await api.get('/api/authorize')
-                 .set('Authorization', session_key)
+                 .set('Authorization', authorization)
                  .expect(401)
     })
 })

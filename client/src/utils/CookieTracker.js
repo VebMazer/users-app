@@ -13,14 +13,14 @@ export function CookieTracker() {
     const usersAuth = cookies.get("usersAuth");
 
     if (usersAuth) {
-      // Initialize the user state with the session_key from the cookie.
-      authorizeApi.setSessionKey(usersAuth);
+      // Set the authorization header for all requests.
+      authorizeApi.setAuthorization(usersAuth);
 
       try {
         // Load user information from the server.
         setUser(await userApi.get());
       } catch (error) {
-        // If the session_key is invalid, remove the session_key cookie.
+        // If the session is invalid, remove the authorization cookie.
         cookies.remove("usersAuth");
       }
     }

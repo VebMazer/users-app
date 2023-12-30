@@ -19,7 +19,8 @@ const parseAuthorization = req => {
   return { session_id, session_key }
 }
 
-// Middleware that checks if the request has a valid session_key, in the authorization header.
+// Middleware that checks if the request has a valid session id and key,
+// in the authorization header.
 const requireAuthorization = async (req, res, next) => {
   try {
       const auth = parseAuthorization(req)

@@ -21,7 +21,7 @@ appRouter.get('/public', async (req, res, next) => {
     } catch (exception) { next(exception) }
 })
 
-// From here on require valid authorization(session_key) on all routes.
+// From here on require valid user session for all routes.
 appRouter.all('*', requireAuthorization)
 
 // From here on require that the user is an admin on all routes.

@@ -87,11 +87,11 @@ export default function Login() {
     }
 
     if (authenticatedUser) {
-      authorizeApi.setSessionKey(authenticatedUser.session_key);
+      authorizeApi.setAuthorization(authenticatedUser.authorization);
 
       const cookies = new Cookies();
 
-      cookies.set("usersAuth", authenticatedUser.session_key, {
+      cookies.set("usersAuth", authenticatedUser.authorization, {
         // Cookie expires in 60 days.
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60),
         path: "/",
