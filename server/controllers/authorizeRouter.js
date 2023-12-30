@@ -67,8 +67,7 @@ authorizeRouter.get('/app/:name', async (req, res, next) => {
 })
 
 
-// Returns user information, for a client with a valid session_key.
-// The simplest way to check that the user has a valid session_key.
+// Returns user information, for a client with a valid session.
 authorizeRouter.get('/', async (req, res, next) => {
   try {
     const { user } = res.locals
@@ -79,8 +78,8 @@ authorizeRouter.get('/', async (req, res, next) => {
 })
 
 
-// Cheks whether the user has a high enough authorization level requested by
-// the app.
+// Cheks whether the user has high enough authorization level
+// for the requested app.
 authorizeRouter.get('/app/:name/:level', async (req, res, next) => {
   try {
     const { user } = res.locals
@@ -120,20 +119,13 @@ authorizeRouter.get('/app/:name/:level', async (req, res, next) => {
 })
 
 
-// User can blacklist their session_key by logging out so that it
-// will no longer function for user authorization.
+// User can logout which will remove the session from the database,
+// making related id and key invalid for authorizing future requests.
 authorizeRouter.get('/logout', async (req, res, next) => {
   try {
-    const session_key = req.get('authorization')
-    
-    const session_key_hash = Session.encryptKey(session_key)
-    const session = await Session.findOneAndRemove({ keyHash: session_key_hash })
+    await Session.findByIdAndRemove(res.locals.session._id)
 
-    if (!session) {
-      return res.status(401).json({ error: 'Invalid session_key.' })
-    }
-
-    res.status(200).end()
+    res.status(204).end()
 
   } catch (exception) { next(exception) }
 })

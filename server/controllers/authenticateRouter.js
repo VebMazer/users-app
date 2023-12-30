@@ -46,10 +46,8 @@ authenticateRouter.post('/', async (req, res, next) => {
       access: user.access
     })
 
-    const session_key = await session.createKey()
-
     const savedSession = await session.save()
-    //const session_key = savedSession.key
+    const session_key = `${savedSession._id} ${savedSession.key}`
 
     // Return the user and the session_key.
     res.status(200).send({ session_key, ...User.format(user) })

@@ -1,34 +1,58 @@
+const safeCompare = require('safe-compare')
 const Session = require('../models/session')
+const messages = require('../utils/messages')
+
+// Authorization header contains the session id and key, which are separated
+// by a space. These are parsed and returned as an object.
+const parseAuthorization = req => {
+  const authString = req.get('authorization')
+
+  if (!authString) return null
+
+  const authValues = authString.split(' ')
+
+  const session_id  = authValues[0]
+  const session_key = authValues[1]
+
+  if (!session_id || !session_key) return null
+
+  return { session_id, session_key }
+}
 
 // Middleware that checks if the request has a valid session_key, in the authorization header.
 const requireAuthorization = async (req, res, next) => {
   try {
-      const session_key = req.get('authorization')
+      const auth = parseAuthorization(req)
 
-      if (!session_key) {
-          return res.status(401).json({ error: 'authorization header missing.' })
-      }
+      if (!auth) return res.status(401).json({error: messages.unauthorized})
 
-      const session_key_hash = Session.encryptKey(session_key)
-      const session = await Session.findOne({ keyHash: session_key_hash })
+      const session = await Session.findById(auth.session_id)
 
-      if (!session) {
-        return res.status(401).json({ error: 'invalid session_key.' })
+      if (!session) return res.status(401).json({error: messages.unauthorized})
+
+      // This is done and always needs to be done with a compare function
+      // that is safe from timing attacks.
+      if (!safeCompare(session.key, auth.session_key)){
+        return res.status(401).json({error: messages.unauthorized})
       }
 
       if (session.expires < Date.now()) {
-        await Session.findOneAndRemove({ key: session_key })
+        await Session.findByIdAndRemove(session._id)
         
-        return res.status(401).json({ error: 'session has expired.' })
+        return res.status(401).json({ error: 'Session has expired.' })
       }
 
+      res.locals.session = session
+
+      // Get rid of this once the rest of the code has been converted to
+      // use res.locals.session.
       res.locals.user = {
         _id:    session.user._id,
         email:  session.user.email,
         admin:  session.admin,
         access: session.access
       }
-
+      
       next()
 
   } catch (error) { next(error) }
