@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const crypto = require('crypto')
 
-let sessionKeyLength = 100
+let sessionKeyLength = 64
 
 const generateKey = () => {
     return crypto.randomBytes(sessionKeyLength).toString('hex')
