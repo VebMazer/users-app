@@ -230,8 +230,6 @@ export default function Users() {
                 <h2 className='text-3xl font-bold'>Portal access management control</h2>
                 <p className='opacity-70'>
                     In this page a portal admin can edit users application specific access levels.
-                    Changes on user access levels come into effect when a user logs out and logs
-                    back in, or when their token expires.
                 </p>
                 <Table>
                     <TableCaption>List of application specific access levels.</TableCaption>
@@ -250,12 +248,8 @@ export default function Users() {
                                 <TableCell>
                                     <ul className="flex flex-col">
                                         {u.access.map(a => {
-                                            //const app = apps.find(s => s._id === a.app)
-                                            console.log('app entry:', a)
 
                                             const access = accessLevels.find(level => level.accessLevel === a.level)
-
-                                            //if (!app) return null
 
                                             return (
                                                 <li key={a.appName + u._id}>

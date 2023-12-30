@@ -1,4 +1,4 @@
-const { port } = require('./config')
+const { port } = require('./utils/config')
 const app = require('./app')
 
 // Start server on the configured port.

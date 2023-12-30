@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import authorizeApi from "../api/authorize";
 import { useStore } from "../utils/store";
 import { portalUrl } from "../config";
@@ -49,13 +51,15 @@ export function ModeToggle() {
 
 function UserNav() {
   const { user, setUser } = useStore();
+  const navigate = useNavigate();
   
   // Run when the logout button is pressed.
   const logout = async () => {
     await authorizeApi.logout();
     const cookies = new Cookies();
-    cookies.remove("usersToken");
+    cookies.remove("usersAuth");
     setUser(null);
+    navigate("/")
   }
 
   const getNameFromEmail = () => {

@@ -6,9 +6,10 @@ const userRouter = require('express').Router()
 const User = require('../models/user')
 const UnconfirmedUser = require('../models/unconfirmedUser')
 const App = require('../models/app')
+const sessionService = require('../services/sessionService')
 
 const { requireAuthorization, userIsAdmin } = require('../middleware/authorize')
-const config = require('../config.js')
+const config = require('../utils/config.js')
 
 
 // Validate password, to contain at least one number, one lowercase letter,
@@ -153,7 +154,7 @@ userRouter.get('/confirm/:id', async (req, res, next) => {
 // From here on require authentication on all routes.
 userRouter.all('*', requireAuthorization)
 
-// A Client with a valid token can get their user data.
+// A Client with a valid session can get their user data.
 userRouter.get('/', async (req, res, next) => {
   try {
     let { _id } = res.locals.user
@@ -226,6 +227,9 @@ userRouter.put('/:id', async (req, res, next) => {
     if (!updatedUser) {
       return res.status(400).json({ error: 'User does not exist.' })
     }
+
+    // Update the sessions related to the user.
+    await sessionService.updateUsersSessions(updatedUser)
 
     res.json(User.format(updatedUser))
 
