@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import appApi from "./api/apps";
 
-import { CookieTracker } from "./utils/CookieTracker";
+import { LocalStorageSync } from "./utils/LocalStorageSync";
 import { ThemeProvider } from "./components/theme-provider";
 import { useStore } from "./utils/store";
 import Login from "./pages/Login";
@@ -35,7 +35,7 @@ export default function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <CookieTracker />
+      <LocalStorageSync />
       <Router>
         <Navbar />
         <Routes>

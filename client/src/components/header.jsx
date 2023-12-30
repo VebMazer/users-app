@@ -17,7 +17,6 @@ import { ChevronDownIcon, Moon, Shield, Sun } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { useTheme } from "./theme-provider";
-import Cookies from "universal-cookie";
 import { Link, useLocation } from "react-router-dom";
 
 export function ModeToggle() {
@@ -56,8 +55,7 @@ function UserNav() {
   // Run when the logout button is pressed.
   const logout = async () => {
     await authorizeApi.logout();
-    const cookies = new Cookies();
-    cookies.remove("usersAuth");
+    localStorage.removeItem("usersAuth");
     setUser(null);
     navigate("/")
   }

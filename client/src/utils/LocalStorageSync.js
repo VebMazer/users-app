@@ -1,16 +1,14 @@
 import { useEffect } from "react";
-import Cookies from "universal-cookie";
 
 import authorizeApi from "../api/authorize";
 import userApi from "../api/users";
 import { useStore } from "./store";
 
-export function CookieTracker() {
+export function LocalStorageSync() {
   const { setUser } = useStore();
 
-  const loadCookies = async () => {
-    const cookies = new Cookies();
-    const usersAuth = cookies.get("usersAuth");
+  const loadLocalStorage = async () => {
+    const usersAuth = localStorage.getItem('usersAuth')
 
     if (usersAuth) {
       // Set the authorization header for all requests.
@@ -19,14 +17,15 @@ export function CookieTracker() {
       try {
         // Load user information from the server.
         setUser(await userApi.get());
+      
       } catch (error) {
-        // If the session is invalid, remove the authorization cookie.
-        cookies.remove("usersAuth");
+        localStorage.removeItem('usersAuth')
       }
     }
   };
+
   useEffect(() => {
-    loadCookies();
+    loadLocalStorage();
   }, []);
 
   return null;

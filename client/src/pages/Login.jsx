@@ -1,7 +1,6 @@
 // node imports
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import Cookies from "universal-cookie";
 
 import authenticateApi from "../api/authenticate";
 import authorizeApi from "../api/authorize";
@@ -89,13 +88,7 @@ export default function Login() {
     if (authenticatedUser) {
       authorizeApi.setAuthorization(authenticatedUser.authorization);
 
-      const cookies = new Cookies();
-
-      cookies.set("usersAuth", authenticatedUser.authorization, {
-        // Cookie expires in 60 days.
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60),
-        path: "/",
-      });
+      localStorage.setItem("usersAuth", authenticatedUser.authorization);
 
       setUser(authenticatedUser);
 

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Cookies from "universal-cookie";
 
 import userApi from "../api/users";
 import authorizeApi from "../api/authorize";

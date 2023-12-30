@@ -34,7 +34,6 @@
     "react-router-dom": "^6.15.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "universal-cookie": "^4.0.4",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
