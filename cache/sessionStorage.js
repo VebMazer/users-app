@@ -1,21 +1,7 @@
-const crypto = require('crypto')
-const { cipherKey, initVector } = require('./config')
-
-const algorithm = 'aes256'
-
-// Might want to use a simpler hashing method in the future then encrypting, but need
-// to make sure it cannot leak information in a timing attack.
-const encrypt = text => {
-    const cipher = crypto.createCipheriv(algorithm, cipherKey, initVector)
-    return cipher.update(text, 'utf8', 'hex') + cipher.final('hex')
-}
-// const decrypt = text => {
-//     const decipher = crypto.createDecipheriv(algorithm, cipherKey, initVector)
-//     return decipher.update(text, 'hex', 'utf8') + decipher.final('utf8')
-// }
+const safeCompare = require('safe-compare')
 
 // Map of sessions held in memory.
-// { keyHash: Session }
+// { id: Session }
 const sessions = new Map()
 
 // Assuming entry size is 1kb max. The max total memory size of the session storage is about 2GB.
@@ -25,12 +11,13 @@ let size = 0
 
 let removeExpiredRan = new Date()
 
-const get = session_key => {
-    key_hash = encrypt(session_key)
+const get = (id, key) => {
     
-    const session = sessions.get(key_hash)
+    const session = sessions.get(id)
     
     if (!session) return null
+
+    if (!safeCompare(session.key, key)) return false
     
     if (session.expires < Date.now()) {
         remove_hash(key_hash)

@@ -1,0 +1,38 @@
+const safeCompare = require('safe-compare')
+const { apiKey } = require('./config')
+
+const authorize = (req, res, next) => {
+  const authKey = req.get('authorization')
+
+  if (!authKey) return res.status(401).json({ error: 'unauthorized' })
+  if (!safeCompare(authKey, apiKey)) return res.status(401).json({ error: 'unauthorized' })
+
+  next()
+}
+
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:  ', request.path)
+    console.log('Body:  ', request.body)
+    console.log('---')
+    next()
+}
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message)
+  
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+    
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+  
+  next(error)
+}
+
+module.exports = {
+  authorize,
+  requestLogger,
+  errorHandler
+}

@@ -23,17 +23,11 @@ if (environment === 'test'){
   url = process.env.URL_PROD
 }
 
-const cipherKey = process.env.CIPHER_KEY
-const initVector = process.env.INIT_VECTOR
-
-
 module.exports = {
   mongoUrl,
   port,
   email,
   emailPW,
   url,
-  environment,
-  cipherKey,
-  initVector
+  environment
 }
