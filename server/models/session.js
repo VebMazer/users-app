@@ -11,7 +11,7 @@ const sessionSchema = new mongoose.Schema({
     key: {
         type: String,
         required: true,
-        default: generateKey(),
+        default: generateKey,
         unique: true
     },
     expires: {
@@ -42,7 +42,6 @@ const sessionSchema = new mongoose.Schema({
         }
     }]
 })
-
 
 // Needs to use oldschool function syntax if "this", is used.
 sessionSchema.methods.updateKey = function updateKey() {
