@@ -59,6 +59,19 @@ sessionSchema.statics.format = session => {
     }
 }
 
+sessionSchema.statics.userInfo = session => {
+    const { admin, access, user } = session
+    const { _id, email, firstname, lastname } = user
+
+    return {
+        _id,
+        email,
+        firstname,
+        lastname,
+        admin,
+        access
+    }
+}
 
 const Session = mongoose.model('Session', sessionSchema)
 

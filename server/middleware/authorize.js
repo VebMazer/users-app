@@ -44,15 +44,6 @@ const requireAuthorization = async (req, res, next) => {
       }
 
       res.locals.session = session
-
-      // Get rid of this once the rest of the code has been converted to
-      // use res.locals.session.
-      res.locals.user = {
-        _id:    session.user._id,
-        email:  session.user.email,
-        admin:  session.admin,
-        access: session.access
-      }
       
       next()
 
@@ -61,9 +52,9 @@ const requireAuthorization = async (req, res, next) => {
 
 // Middleware that ensures that the user making the request
 // is an admin. Must be applied after the requireAuthorization
-// middleware. (because res.locals.user must be defined)
+// middleware. (because res.locals.session must be defined)
 const userIsAdmin = (req, res, next) => {
-  if (!res.locals.user.admin) {
+  if (!res.locals.session.admin) {
       return res.status(401).json({ error: 'unauthorized user' })
   }
   next()

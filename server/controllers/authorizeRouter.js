@@ -29,7 +29,7 @@ authorizeRouter.all('*', requireAuthorization)
 // the app defined in the name parameter.
 authorizeRouter.get('/app/:name', async (req, res, next) => {
   try {
-    const { user } = res.locals
+    const { session } = res.locals
     const name = req.params.name.toLowerCase()
     const authorization = req.get('authorization')
 
@@ -46,7 +46,7 @@ authorizeRouter.get('/app/:name', async (req, res, next) => {
       // Send the authentication password, so that
       // the app knows its the user app that is sending the request.
       {
-        email: user.email,
+        email: session.user.email,
         authorization,
         app_key: app.appKey
       }
@@ -58,7 +58,7 @@ authorizeRouter.get('/app/:name', async (req, res, next) => {
 
     // authorization is used by the user app and the user_key is used by the
     // app that the user will be redirected to.
-    res.status(200).send({ user_key, ...User.format(user) })
+    res.status(200).send({ user_key, ...Session.userInfo(session) })
 
     // After receiving this response on the frontend, redirect the
     // user to the app's url, with the Authorization header
@@ -70,9 +70,9 @@ authorizeRouter.get('/app/:name', async (req, res, next) => {
 // Returns user information, for a client with a valid session.
 authorizeRouter.get('/', async (req, res, next) => {
   try {
-    const { user } = res.locals
+    const { session } = res.locals
     
-    res.json(User.format(user))
+    res.json(Session.userInfo(session))
 
   } catch (exception) { next(exception) }
 })
@@ -82,11 +82,11 @@ authorizeRouter.get('/', async (req, res, next) => {
 // for the requested app.
 authorizeRouter.get('/app/:name/:level', async (req, res, next) => {
   try {
-    const { user } = res.locals
+    const { session } = res.locals
     let { name, level } = req.params
     level = parseInt(level)
 
-    let access = user.access.find(a => a.appName === name)
+    let access = session.access.find(a => a.appName === name)
 
     if (!access) {
       // In case the app name is not defined in the session.
@@ -98,7 +98,7 @@ authorizeRouter.get('/app/:name/:level', async (req, res, next) => {
       }
 
       // Find and access entry for the app from the list if it exists.
-      access = user.access.find(a => app._id.equals(a.app))
+      access = session.access.find(a => app._id.equals(a.app))
     }
 
     if (!access) {
@@ -113,7 +113,7 @@ authorizeRouter.get('/app/:name/:level', async (req, res, next) => {
       })
     }
 
-    res.json(User.format(user))
+    res.json(Session.userInfo(session))
 
   } catch (exception) { next(exception) }
 })

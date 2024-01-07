@@ -157,7 +157,7 @@ userRouter.all('*', requireAuthorization)
 // A Client with a valid session can get their user data.
 userRouter.get('/', async (req, res, next) => {
   try {
-    let { _id } = res.locals.user
+    let { _id } = res.locals.session.user
 
     // Fetch user to make sure that the user received is up to date.
     const user = await User.findById(_id)
